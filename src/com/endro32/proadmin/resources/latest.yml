@@ -1,0 +1,12 @@
+installed:
+  vanilla:
+    snapshot: 0
+    release: 0
+  spigot: 0
+  craftbukkit: 0
+  bungeecord: 0
+available:
+  vanilla:
+    snapshot: 0
+    release: 0
+  bungeecord: 0

@@ -1,0 +1,44 @@
+global:
+  name: Server
+  motd: A Minecraft Server
+  ip: 0.0.0.0
+  startport: 25566
+  defaultapp: vanilla-1.8.9
+  autoupdate:
+    servers: true
+    vanilla: true
+    snapshot: true
+    spigot: false
+    bungeecord: true
+  server-icons: true
+  defaulticon: server-icon
+bungeecord:
+  bungeecord: true
+  proxybypass: false
+  version: 1105
+  port: 25565
+servers:
+  groupa:
+    mode: cloned
+    count: 10
+    app: vanilla-1.8.9
+    defaultmap: world
+    icon: server-icon
+    plugins:
+    - PermissionsEx§1.23.3
+    - WorldGuard
+    maps:
+    - world
+  groupb:
+    mode: individual
+    primary:
+      app: default
+      defaultmap: Survival
+      icon: default
+      plugins:
+      - PermissionsEx
+      - Multiverse-Core
+      maps:
+      - Survival
+      - Creative
+eula: true

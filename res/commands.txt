@@ -1,0 +1,23 @@
+--Setup Commands--Used to configure application and navigate through server--------
+  list servertypes				List all server types
+  newtype <name> [cloned, individual]		Create a new server type
+  deltype <name>				Removes a server type
+  set type <type>				Sets type to work with
+  set server <name>				Sets server to work with. Current type must be individual
+  close						Closes current working area (server or type)
+  mode						Gets type of current working type
+  newserver <name>				Creates new server. Current type must be individual
+  delserver <name>				Deletes a server. Curent type must be individual
+--Server Management Commands--Manage individual server or server type if cloned---
+  list apps					Lists all installed apps
+  set app					Set application for a server
+  list plugins installed			Lists all installed plugins
+  list plugins available			Lists all available plugins
+  install plugin <plugin>			Installs a plugin
+  remove plugin <plugin>			Removes an installed plugin
+  list maps installed				Lists all installed maps
+  list maps available				Lists all available maps
+  install map <plugin>				Installs a map
+  remove map <plugin>				Removes an installed map
+--Server Admin Commands-------------------------------------------
+--Deployment Commands---------------------------------------------
