@@ -37,27 +37,27 @@ public class Main extends Application {
 	
 	static void initiate() {
 		FileManager.updateFileSystem();
-		if(Config.getBoolean("global.autoupdate.vanilla")) {
+		if(Config.getAutoupdate(Config.AutoUpdate.VANILLA)) {
 			AppManager.updateVanilla();
 		}
-		if(Config.getBoolean("global.autoupdate.snapshot")) {
+		if(Config.getAutoupdate(Config.AutoUpdate.SNAPSHOT)) {
 			AppManager.updateSnapshot();
 		}
-		if(Config.getBoolean("global.autoupdate.spigot")) {
+		if(Config.getAutoupdate(Config.AutoUpdate.SPIGOT)) {
 			AppManager.updateBuildTools();
 			AppManager.runBuildTools();
 			AppManager.updateSpigot();
 		}
-		if(Config.getBoolean("global.autoupdate.bungeecord")) {
+		if(Config.getAutoupdate(Config.AutoUpdate.BUNGEECORD)) {
 			AppManager.updateBungeecord();
 		}
-		if(Config.getBoolean("bungeecord.bungeecord")) {
+		if(Config.getBungeecordEnabled()) {
 			BungeeConfig.initialize();
 		}
-		if(Config.getBoolean("global.autoupdate.servers")) {
+		if(Config.getAutoupdate(Config.AutoUpdate.SERVERS)) {
 			ServerManager.updateAll();
 		}
-		if(Config.getBoolean("bungeecord.bungeecord")) {
+		if(Config.getBungeecordEnabled()) {
 			ServerManager.updateBungeecordRegistry();
 		}
 		return;

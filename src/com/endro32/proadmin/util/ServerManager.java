@@ -17,35 +17,25 @@ import com.endro32.proadmin.config.ServerProperties;
 public class ServerManager {
 	
 	@SuppressWarnings("unchecked")
-	public static List<String> getPluginsForServer(String type, String server) {
-		String mode = getMode(type);
-		if(mode.equals("individual")) {
-			return (List<String>) Config.getMap("servers."+type+"."+server+".plugins");
-		} else if(mode.equals("cloned")) {
-			return (List<String>) Config.getMap("servers."+type+".plugins");
-		} else return null;
-	}
-	
-	@SuppressWarnings("unchecked")
 	public static List<String> getMapsForServer(String type, String server) {
-		String mode = getMode(type);
-		if(mode.equals("individual")) {
+		GroupMode mode = Config.getMode(type);
+		if(mode.equals(GroupMode.INDIVIDUAL)) {
 			return (List<String>) Config.getMap("servers."+type+"."+server+".maps");
-		} else if(mode.equals("cloned")) {
+		} else if(mode.equals(GroupMode.CLONED)) {
 			return (List<String>) Config.getMap("servers."+type+".maps");
 		} else return null;
 	}
 	
 	public static void update(String group, String server) {
-		if(getServerNamesForGroup(group).contains(server)) {
+		if(Config.getServerNamesForGroup(group).contains(server)) {
 			String app;
-			if(getMode(group).equals("individual")) {
+			if(Config.getMode(group).equals(GroupMode.INDIVIDUAL)) {
 				app = Config.getString("servers."+group+"."+server+".app");
-			} else if(getMode(group).equals("cloned")){
+			} else if(Config.getMode(group).equals(GroupMode.CLONED)){
 				app = Config.getString("servers."+group+".app");
 			} else return;
 			if(app.equals("default")) {
-				app = Config.getString("global.defaultapp");
+				app = Config.getDefaultApp();
 			}
 			app += ".jar";
 			File a = new File(FileManager.appdir+"/apps/"+app);
@@ -60,7 +50,7 @@ public class ServerManager {
 	}
 	
 	public static void updateBungeecord() {
-		if(!Config.getBoolean("bungeecord.bungeecord")) return;
+		if(!Config.getBungeecordEnabled()) return;
 		AppManager.updateBungeecord();
 		int version = 0;
 		try {
@@ -83,18 +73,18 @@ public class ServerManager {
 	}
 	
 	public static void updateAll() {
-		String defaultapp = Config.getString("global.defaultapp");
-		for(String group : getServerGroupNames()) {
-			String mode = getMode(group);
+		String defaultapp = Config.getDefaultApp();
+		for(String group : Config.getServerGroupNames()) {
+			GroupMode mode = Config.getMode(group);
 			String app;
-			if(mode.equals("cloned")) {
+			if(mode.equals(GroupMode.CLONED)) {
 				app = Config.getString("servers."+group+".app");
-			} else if(mode.equals("individual")) {
+			} else if(mode.equals(GroupMode.INDIVIDUAL)) {
 				app = "";
 			} else continue;
 			if(app.equals("default")) app = defaultapp;
 			app += ".jar";
-			for(String name : getServerNamesForGroup(group)) {
+			for(String name : Config.getServerNamesForGroup(group)) {
 				if(mode.equals("individual")) {
 					app = Config.getString("servers."+group+"."+name+".app");
 					if(app.equals("default")) app = defaultapp;
@@ -110,7 +100,7 @@ public class ServerManager {
 				}
 			}
 		}
-		if(Config.getBoolean("global.server-icons")) updateIcons();
+		if(Config.getServerIconsEnabled()) updateIcons();
 		PluginManager.loadPlugins();
 		ServerManager.updatePlugins();
 		MapManager.loadMaps();
@@ -121,12 +111,12 @@ public class ServerManager {
 	
 	public static boolean updatePorts() {
 		ServerProperties sp;
-		int port = Config.getInt("global.startport");
-		if(Config.getBoolean("bungeecord.bungeecord")) {
+		int port = Config.getGlobalStartPort();
+		if(Config.getBungeecordEnabled()) {
 			BungeeConfig.updateHost();
 		}
-		for(String group : getServerGroupNames()) {
-			for(String name : getServerNamesForGroup(group)) {
+		for(String group : Config.getServerGroupNames()) {
+			for(String name : Config.getServerNamesForGroup(group)) {
 				sp = new ServerProperties("groups/"+group+"/"+name);
 				sp.load();
 				sp.setProperty("server-port", Integer.toString(port++));
@@ -138,15 +128,15 @@ public class ServerManager {
 	
 	public static boolean updateIPs() {
 		ServerProperties sp;
-		String ip = Config.getString("global.ip");
-		if(Config.getBoolean("bungeecord.bungeecord")) {
+		String ip = Config.getGlobalIP();
+		if(Config.getBungeecordEnabled()) {
 			BungeeConfig.updateHost();
-			if(!Config.getBoolean("bungeecord.bypassproxy")) {
+			if(!Config.getProxyBypassEnabled()) {
 				ip = "127.0.0.1";
 			}
 		}
-		for(String group : getServerGroupNames()) {
-			for(String name : getServerNamesForGroup(group)) {
+		for(String group : Config.getServerGroupNames()) {
+			for(String name : Config.getServerNamesForGroup(group)) {
 				sp = new ServerProperties("groups/"+group+"/"+name);
 				sp.load();
 				sp.setProperty("server-ip", ip);
@@ -161,8 +151,8 @@ public class ServerManager {
 		ServerProperties sp;
 		int port;
 		String motd;
-		for(String group : getServerGroupNames()) {
-			for(String name : getServerNamesForGroup(group)) {
+		for(String group : Config.getServerGroupNames()) {
+			for(String name : Config.getServerNamesForGroup(group)) {
 				sp = new ServerProperties("groups/"+group+"/"+name);
 				sp.load();
 				port = Integer.parseInt(sp.getProperty("server-port"));
@@ -173,8 +163,8 @@ public class ServerManager {
 	}
 	
 	public static void updatePlugins() {
-		for(String group : getServerGroupNames()) {
-			for(String server : getServerNamesForGroup(group)) {
+		for(String group : Config.getServerGroupNames()) {
+			for(String server : Config.getServerNamesForGroup(group)) {
 				updatePlugins(group, server);
 			}
 		}
@@ -182,14 +172,10 @@ public class ServerManager {
 	
 	public static void updatePlugins(String group, String server) {
 		String[] dat;
-		List<Object> objects;
-		if(getMode(group).equals("individual")) {
-			objects = Config.getList("servers."+group+"."+server+".plugins");
-		} else if(getMode(group).equals("cloned")){
-			objects = Config.getList("servers."+group+".plugins");
-		} else return;
-		for(Object o : objects) {
-			dat = o.toString().split("§", -1);
+		List<String> plugins = Config.getPluginsForServer(group, server);
+		if(plugins.equals(null)) plugins = Config.getPlulginsForGroup(group);
+		for(String s : plugins) {
+			dat = s.split("§", -1);
 			String name = dat[0];
 			String version = "";
 			if(dat.length >= 2) {
@@ -202,8 +188,8 @@ public class ServerManager {
 	}
 	
 	public static void updateMaps() {
-		for(String group : getServerGroupNames()) {
-			for(String server : getServerNamesForGroup(group)) {
+		for(String group : Config.getServerGroupNames()) {
+			for(String server : Config.getServerNamesForGroup(group)) {
 				updateMaps(group, server);
 			}
 		}
@@ -211,9 +197,9 @@ public class ServerManager {
 	
 	public static void updateMaps(String group, String server) {
 		List<Object> objects;
-		if(getMode(group).equals("individual")) {
+		if(Config.getMode(group).equals(GroupMode.INDIVIDUAL)) {
 			objects = Config.getList("servers."+group+"."+server+".maps");
-		} else if(getMode(group).equals("cloned")){
+		} else if(Config.getMode(group).equals(GroupMode.CLONED)){
 			objects = Config.getList("servers."+group+".maps");
 		} else return;
 		for(Object o : objects) {
@@ -222,8 +208,8 @@ public class ServerManager {
 	}
 	
 	public static void updateIcons() {
-		for(String group : getServerGroupNames()) {
-			for(String server : getServerNamesForGroup(group)) {
+		for(String group : Config.getServerGroupNames()) {
+			for(String server : Config.getServerNamesForGroup(group)) {
 				updateIcon(group, server);
 			}
 		}
@@ -233,12 +219,12 @@ public class ServerManager {
 		File icon;
 		String iconName;
 		File target = new File(FileManager.appdir+"/groups/"+group+"/"+server+"/server-icon.png");
-		if(getMode(group).equals("individual")) {
+		if(Config.getMode(group).equals(GroupMode.INDIVIDUAL)) {
 			iconName = Config.getString("servers."+group+"."+server+".icon");
-		} else if(getMode(group).equals("cloned")){
+		} else if(Config.getMode(group).equals(GroupMode.CLONED)){
 			iconName = Config.getString("servers."+group+".icon");
 		} else return;
-		if(iconName.equals("default")) iconName = Config.getString("global.defaulticon");
+		if(iconName.equals("default")) iconName = Config.getDefaultIcon();
 		icon = new File(FileManager.appdir+"/icons/"+iconName+".png");
 		if(!icon.exists()) return;
 		try {

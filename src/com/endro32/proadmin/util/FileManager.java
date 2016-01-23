@@ -47,28 +47,28 @@ public class FileManager {
 		mkdir("apps");
 		mkdir("groups");
 		extractResource("latest.yml", "apps/latest.yml", false);
-		if(Config.getBoolean("global.autoupdate.spigot")) {
+		if(Config.getAutoupdate(Config.AutoUpdate.SPIGOT)) {
 			mkdir("buildtools");
 		}
-		if(Config.getBoolean("bungeecord.bungeecord")) {
+		if(Config.getBungeecordEnabled()) {
 			mkdir("bungeecord");
 			extractResource("bungeeconfig.yml", "bungeecord/config.yml", false);
 		}
-		if(Config.getBoolean("global.server-icons")) {
+		if(Config.getServerIconsEnabled()) {
 			mkdir("icons");
 		}
-		for(String group : ServerManager.getServerGroupNames()) {
+		for(String group : Config.getServerGroupNames()) {
 			mkdir("groups/"+group);
-			for(String name : ServerManager.getServerNamesForGroup(group)) {
+			for(String name : Config.getServerNamesForGroup(group)) {
 				mkdir("groups/"+group+"/"+name);
 				mkdir("groups/"+group+"/"+name+"/plugins");
 				File eula = new File("groups/"+group+"/"+name+"/eula.txt");
 				if(!eula.exists()) {
 					FileGenerator.generateEULA("groups/"+group+"/"+name, 
-							Config.getBoolean("eula"));
+							Config.getEULAStatus());
 				} else if(eula.exists()){
 					FileGenerator.updateEULA("groups/"+group+"/"+name, 
-							Config.getBoolean("eula"));
+							Config.getEULAStatus());
 				}
 				extractResource("server.properties", "groups/"+group+"/"+name+"/server.properties",
 						false);

@@ -89,7 +89,7 @@ public class AppManager {
 	
 	public static boolean updateAll() {
 		updateVanilla();
-		if(Config.getBoolean("global.autoupdate.spigot")) {
+		if(Config.getAutoupdate(Config.AutoUpdate.SPIGOT)) {
 			updateBuildTools();
 			runBuildTools();
 		}

@@ -470,11 +470,12 @@ public class Config {
 	}
 	
 	public static void createServer(String group, String name) {
-		
+		if(!getServerGroupNames().contains(name)) createGroup(group, GroupMode.INDIVIDUAL);
+		if(getServerNamesForGroup(group).contains(name)) return;
 	}
 	
 	public static void removeServer(String group, String name) {
-		
+		if(!getServerNamesForGroup(group).contains(name)) return;
 	}
 	
 	public static List<String> getServerNamesForGroup(String group) {
@@ -497,6 +498,59 @@ public class Config {
 			}
 			return names;
 		} else return null;
+	}
+	
+	public static List<String> getPlulginsForGroup(String group) {
+		if(!getServerGroupNames().contains(group)) return null;
+		if(getMode(group).equals(GroupMode.INDIVIDUAL)) return null;
+		List<String> plugins = new ArrayList<String>();
+		try {
+			for(Object object : getList("server."+group+".plugins")) {
+				plugins.add(object.toString());
+			}
+			return plugins;
+		} catch(NullPointerException e) {
+			return null;
+		}
+	}
+	
+	public static List<String> getPluginsForServer(String group, String server) {
+		if(!getServerGroupNames().contains(group)) return null;
+		if(!getServerNamesForGroup(group).contains(server)) return null;
+		if(getMode(group).equals(GroupMode.CLONED)) return null;
+		List<String> plugins = new ArrayList<String>();
+		try {
+			for(Object object : getList("server."+group+"."+server+".plugins")) {
+				plugins.add(object.toString());
+			}
+			return plugins;
+		} catch(NullPointerException e) {
+			return null;
+		}
+	}
+	
+	/*
+	 * Following are the EULA status methods. The purpose of holding this
+	 * value is to prevent there from being an issue with the fact that
+	 * the EULA is essentially bypassed by this application. However, the
+	 * EULA still has to be agreed to thanks to the fact that this application
+	 * itself promts the user to read and agree to the EULA, then stores the
+	 * status in the config, and uses that status to generate the EULA files
+	 * for the server. In this way, the user does indeed agree to the EULA, 
+	 * and this application doesn't simply remove that requirement.
+	 */
+	
+	public static void setEULAStatus(boolean status) {
+		setObject("eula", status);
+	}
+	
+	public static boolean getEULAStatus() {
+		try {
+			return getBoolean("eula");
+		} catch(NullPointerException e) {
+			setEULAStatus(false);
+			return false;
+		}
 	}
 	
 	/*
