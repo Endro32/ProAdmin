@@ -12,54 +12,50 @@ import com.endro32.proadmin.util.FileManager;
 import com.endro32.proadmin.util.GroupMode;
 
 public class Config {
-	
+
 	/*
-	 * The purpose of this class is quite simple: to manage the primary
-	 * config for this application. It is responsible for maintaining the
-	 * structure of the config, getting data, and adding data.
-	 * Here are the primary functions of this class:
-	 * *Create Servers
-	 * *Delete Servers
-	 * *Modify Servers
-	 * *Provide getter and setter methods for all global options
-	 * *Provide getter and setter methods for all bungeecord options
-	 * *Allow for quick modifications to the names of options by making
-	 *  full use of the power of Object-Oriented programming
+	 * The purpose of this class is quite simple: to manage the primary config
+	 * for this application. It is responsible for maintaining the structure of
+	 * the config, getting data, and adding data. Here are the primary functions
+	 * of this class: *Create Servers *Delete Servers *Modify Servers *Provide
+	 * getter and setter methods for all global options *Provide getter and
+	 * setter methods for all bungeecord options *Allow for quick modifications
+	 * to the names of options by making full use of the power of
+	 * Object-Oriented programming
 	 */
-	
+
 	/*
-	 * This is the instance of YAMLConfig used to access the file itself.
-	 * The second parameter in its constructor means that the first parameter
-	 * is not an absolute path, but instead a path inside the application's
-	 * directory. In this case, it is simply 'config.yml'
+	 * This is the instance of YAMLConfig used to access the file itself. The
+	 * second parameter in its constructor means that the first parameter is not
+	 * an absolute path, but instead a path inside the application's directory.
+	 * In this case, it is simply 'config.yml'
 	 */
 	static YAMLConfig yaml = new YAMLConfig("config.yml", false);
-	
+
 	/*
-	 * This enumerator holds all the possible autoupdaters. It really
-	 * just makes life easier when changing autoupdate values.
+	 * This enumerator holds all the possible autoupdaters. It really just makes
+	 * life easier when changing autoupdate values.
 	 */
 	public static enum AutoUpdate {
-	SERVERS,
-	VANILLA,
-	SNAPSHOT,
-	SPIGOT,
-	BUNGEECORD}
-	
+		SERVERS, VANILLA, SNAPSHOT, SPIGOT, BUNGEECORD
+	}
+
 	/**
 	 * Re-extracts the the default configuration from the resources package
+	 * 
 	 * @param override
-	 * Whether to override the existing config file.
+	 *            Whether to override the existing config file.
 	 */
 	public static void resetConfig(boolean override) {
 		FileManager.extractResource("config.yml", "config.yml", override);
 	}
-	
+
 	/**
-	 * Sets the server's global name in the config
-	 * If the option has been deleted somehow, it will be re-created
+	 * Sets the server's global name in the config If the option has been
+	 * deleted somehow, it will be re-created
+	 * 
 	 * @param name
-	 * Name to set in the config
+	 *            Name to set in the config
 	 */
 	public static void setGlobalName(String name) {
 		try {
@@ -69,24 +65,26 @@ public class Config {
 			setString("global.name", name);
 		}
 	}
-	
+
 	/**
 	 * @return Global name in the config
 	 */
 	public static String getGlobalName() {
 		try {
 			return getString("global.name");
-		} catch(NullPointerException e) { // Will occur if global name doesn't exist
+		} catch(NullPointerException e) { // Will occur if global name doesn't
+											// exist
 			setGlobalName("Minecraft Server");
 			return "Minecraft Server";
 		}
 	}
-	
+
 	/**
-	 * Sets the global message of the day in the config.
-	 * If the option has been deleted somehow, it will be re-created
+	 * Sets the global message of the day in the config. If the option has been
+	 * deleted somehow, it will be re-created
+	 * 
 	 * @param motd
-	 * Message of the day to put in the config
+	 *            Message of the day to put in the config
 	 */
 	public static void setGlobalMOTD(String motd) {
 		try {
@@ -96,9 +94,10 @@ public class Config {
 			setString("global.motd", motd);
 		}
 	}
-	
+
 	/**
 	 * Will return null if the option has been deleted
+	 * 
 	 * @return Global message of the day in the config
 	 */
 	public static String getGlobalMOTD() {
@@ -109,15 +108,15 @@ public class Config {
 			return "A Minecraft Server";
 		}
 	}
-	
+
 	/**
-	 * Sets the global ip in the config.
-	 * If the option has been deleted, it will be re-created.
-	 * Before changing the value, this method will first delete any
-	 * non-numeric characters other than a period, then will check to
-	 * make sure that it is a valid IPv4 address.
+	 * Sets the global ip in the config. If the option has been deleted, it will
+	 * be re-created. Before changing the value, this method will first delete
+	 * any non-numeric characters other than a period, then will check to make
+	 * sure that it is a valid IPv4 address.
+	 * 
 	 * @param ip
-	 * IP to set in the config
+	 *            IP to set in the config
 	 */
 	public static void setGlobalIP(String ip) {
 		String numericip = ip.replaceAll("[^\\d.]", "");
@@ -125,7 +124,7 @@ public class Config {
 		if(dat.length != 4) return;
 		for(String data : dat) {
 			int x = Integer.parseInt(data);
-			if(!(0<=x && x <= 255)) return;
+			if(!(0 <= x && x <= 255)) return;
 		}
 		// At this point, the numericip is assumed to be valid
 		try {
@@ -135,9 +134,10 @@ public class Config {
 			setString("global.ip", numericip);
 		}
 	}
-	
+
 	/**
 	 * Will return null if the option has been deleted
+	 * 
 	 * @return Global IP from config
 	 */
 	public static String getGlobalIP() {
@@ -150,13 +150,13 @@ public class Config {
 	}
 
 	/**
-	 * Sets the global starting port in the config.
-	 * This setting specifies the first port that will be used by the
-	 * individual servers. Each server's port will be automatically
-	 * assigned, starting with this starting point. This value must be
-	 * between 1024 and 65536
+	 * Sets the global starting port in the config. This setting specifies the
+	 * first port that will be used by the individual servers. Each server's
+	 * port will be automatically assigned, starting with this starting point.
+	 * This value must be between 1024 and 65536
+	 * 
 	 * @param port
-	 * Port to set in the config
+	 *            Port to set in the config
 	 */
 	public static void setGlobalStartPort(int port) {
 		if(!(1024 < port && port <= 65536)) return;
@@ -167,7 +167,7 @@ public class Config {
 			setObject("global.startport", port);
 		}
 	}
-	
+
 	/**
 	 * @return Global startingn port from the config
 	 */
@@ -179,13 +179,14 @@ public class Config {
 			return 25566;
 		}
 	}
-	
+
 	/**
-	 * Sets the default application to use for the individual servers.
-	 * This will be used by any server whose app preference is set
-	 * to 'default'.
+	 * Sets the default application to use for the individual servers. This will
+	 * be used by any server whose app preference is set to 'default'.
+	 * 
 	 * @param appname
-	 * Application name excluding the extension, because all apps are jars
+	 *            Application name excluding the extension, because all apps are
+	 *            jars
 	 */
 	public static void setDefaultApp(String appname) {
 		try {
@@ -195,26 +196,28 @@ public class Config {
 			setString("global.defaultapp", appname);
 		}
 	}
-	
+
 	/**
 	 * @return Default application excluding extension (.jar)
 	 */
 	public static String getDefaultApp() {
 		try {
 			return getString("global.defaultapp");
-		} catch(NullPointerException e) { // Will occur if global name doesn't exist
+		} catch(NullPointerException e) { // Will occur if global name doesn't
+											// exist
 			setGlobalName("vanilla-latest");
 			return "vanilla-latest";
 		}
 	}
-	
+
 	/**
-	 * Enables or disables an autoupdater. All available updates are stored
-	 * in the `AutoUpdate` enumerator of this class.
+	 * Enables or disables an autoupdater. All available updates are stored in
+	 * the `AutoUpdate` enumerator of this class.
+	 * 
 	 * @param option
-	 * Autoupdater to set
+	 *            Autoupdater to set
 	 * @param value
-	 * What to set the autoupdater to
+	 *            What to set the autoupdater to
 	 */
 	public static void setAutoupdate(AutoUpdate option, boolean value) {
 		try {
@@ -256,10 +259,10 @@ public class Config {
 			}
 		}
 	}
-	
+
 	/**
 	 * @param option
-	 * Autoupdater to get the value of
+	 *            Autoupdater to get the value of
 	 * @return Whether the specified autoupdater is enabled
 	 */
 	public static boolean getAutoupdate(AutoUpdate option) {
@@ -287,12 +290,12 @@ public class Config {
 			}
 		}
 	}
-	
+
 	/**
 	 * @param enabled
-	 * Whether to enable or disable server icons
+	 *            Whether to enable or disable server icons
 	 */
-	public static void setServerIconsEnabled(Boolean enabled)  {
+	public static void setServerIconsEnabled(Boolean enabled) {
 		try {
 			setObject("global.server-icons", enabled);
 		} catch(NullPointerException e) {
@@ -315,8 +318,10 @@ public class Config {
 
 	/**
 	 * Sets the default server icon.
+	 * 
 	 * @param icon
-	 * Name of the file excluding the extension, because all icons are png's
+	 *            Name of the file excluding the extension, because all icons
+	 *            are png's
 	 */
 	public static void setDefaultIcon(String icon) {
 		try {
@@ -328,7 +333,7 @@ public class Config {
 	}
 
 	/**
-	 * @return Name of the default icon excluding the extension '.png'
+	 * @return Name of the default icon excluding the extension (.png)
 	 */
 	public static String getDefaultIcon() {
 		try {
@@ -338,12 +343,16 @@ public class Config {
 			return "server-icon";
 		}
 	}
-	
+
 	/*
-	 * Above this point are the global settings
-	 * Below are the bungeecord settings
+	 * Above this point are the global settings Below are the bungeecord
+	 * settings
 	 */
-	
+
+	/**
+	 * @param enabled
+	 *            Whether to use bungeecord or not
+	 */
 	public static void setBungeecordEnabled(boolean enabled) {
 		try {
 			setObject("bungeecord.bungeecord", enabled);
@@ -352,7 +361,10 @@ public class Config {
 			setObject("bungeecord.bungeecord", enabled);
 		}
 	}
-	
+
+	/**
+	 * @return Whether bungeecord is enabled
+	 */
 	public static boolean getBungeecordEnabled() {
 		try {
 			return getBoolean("bungeecord.bungeecord");
@@ -361,7 +373,15 @@ public class Config {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * This preference allows clients to connect directly the the individual
+	 * servers in the network without going through the bungeecord proxy. It
+	 * does nothing if bungeecord is enabled.
+	 * 
+	 * @param enabled
+	 *            Whether clients should be able to bypass the proxy
+	 */
 	public static void setProxyBypassEnabled(boolean enabled) {
 		try {
 			setObject("bungeecord.proxybypass", enabled);
@@ -370,7 +390,10 @@ public class Config {
 			setObject("bungeecord.proxybypass", enabled);
 		}
 	}
-	
+
+	/**
+	 * @return Whether proxy bypassing is enabled
+	 */
 	public static boolean getProxyBypassEnabled() {
 		try {
 			return getBoolean("bungeecord.proxybypass");
@@ -379,7 +402,15 @@ public class Config {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Sets the version of bungeecord to use. If it is set to `latest`, the app
+	 * manager will automatically keep bungeecord up to date. Latest is the same
+	 * as any number 0 or less, since the value is an integer
+	 * 
+	 * @param version
+	 *            Version of bungeecord to use
+	 */
 	public static void setBungeecordVersion(int version) {
 		String ver;
 		if(version <= 0) {
@@ -394,7 +425,12 @@ public class Config {
 			setObject("bungeecord.version", ver);
 		}
 	}
-	
+
+	/**
+	 * Returns 0 or less if latest is to be used
+	 * 
+	 * @return Version of bungeecord set in the config
+	 */
 	public static int getBungeecordVersion() {
 		String ver;
 		try {
@@ -408,13 +444,20 @@ public class Config {
 		} else {
 			try {
 				return Integer.parseInt(ver);
-			} catch (NumberFormatException e) {
+			} catch(NumberFormatException e) {
 				return -1;
 			}
 		}
 	}
-	
+
+	/**
+	 * Does nothing if the port to be set is not within range (1024-65536)
+	 * 
+	 * @param port
+	 *            Port bungeecord should listen on
+	 */
 	public static void setBungeecordPort(int port) {
+
 		if(!(1024 < port && port <= 65536)) return;
 		try {
 			setObject("bungeecord.port", port);
@@ -423,7 +466,11 @@ public class Config {
 			setObject("bungeecord.port", port);
 		}
 	}
-	
+
+	/**
+	 * @return What port bungeecord is listening on
+	 */
+
 	public static int getBungeecordPort() {
 		try {
 			return getInt("bungeecord.port");
@@ -432,25 +479,61 @@ public class Config {
 			return 25565;
 		}
 	}
-	
+
 	/*
-	 * Above this point are the bungeecord settings
-	 * Below are the server management settings
+	 * Above this point are the bungeecord settings Below are the server
+	 * management settings
 	 */
-	
+
 	/**
-	 * Creates a server group in the config
-	 * This action will be reflected on the filesystem almost immediately,
-	 * as this method will then update the filesystem
+	 * Creates a server group in the config This action will be reflected on the
+	 * filesystem almost immediately, as this method will then update the
+	 * filesystem
 	 */
 	public static void createGroup(String name, GroupMode mode) {
 		if(getServerGroupNames().contains(name)) return;
+		Map<String, Object> group = new HashMap<String, Object>();
+		if(mode.equals(GroupMode.INDIVIDUAL)) {
+			group.put("mode", "individual");
+		} else if(mode.equals(GroupMode.CLONED)) {
+			group.put("mode", "cloned");
+			group.put("count", 1);
+			group.put("app", "default");
+			group.put("defaultmap", "world");
+			group.put("icon", "default");
+			group.put("plugins", new ArrayList<String>());
+			group.put("maps", new ArrayList<String>());
+		} else
+			return; // Should never happen
+		try {
+			setObject("servers." + name, group);
+		} catch(NullPointerException e) {
+			Map<String, Object> servers = new HashMap<String, Object>();
+			servers.put(name, group);
+			setObject("servers", servers);
+		}
 	}
-	
+
+	/**
+	 * Removes a group from the servers list in the config
+	 * 
+	 * @param name
+	 *            Group to remove
+	 */
 	public static void removeGroup(String name) {
 		if(!getServerGroupNames().contains(name)) return;
+		try {
+			Map<Object, Object> groups = getMap("servers");
+			groups.remove(name);
+			setObject("servers", groups);
+		} catch(NullPointerException e) {
+			return;
+		}
 	}
-	
+
+	/**
+	 * @return List of the names of the different server groups
+	 */
 	public static List<String> getServerGroupNames() {
 		Map<Object, Object> map = (Map<Object, Object>) Config.getMap("servers");
 		List<String> names = new ArrayList<String>();
@@ -459,53 +542,67 @@ public class Config {
 		}
 		return names;
 	}
-	
-	public static GroupMode getMode(String type) {
-		String mode = Config.getString("servers."+type+".mode");
+
+	/**
+	 * Will return null if the group doesn't exist
+	 * @param group
+	 * Group to get the mode of
+	 * @return
+	 * The mode of the specified group
+	 */
+	public static GroupMode getMode(String group) {
+		String mode;
+		try {
+			mode = Config.getString("servers." + group + ".mode");
+		} catch(NullPointerException e) {
+			return null;
+		}
 		if(mode.equals("individual")) {
 			return GroupMode.INDIVIDUAL;
 		} else if(mode.equals("cloned")) {
 			return GroupMode.CLONED;
-		} else return null;
+		} else
+			return null;
 	}
-	
+
 	public static void createServer(String group, String name) {
 		if(!getServerGroupNames().contains(name)) createGroup(group, GroupMode.INDIVIDUAL);
 		if(getServerNamesForGroup(group).contains(name)) return;
 	}
-	
+
 	public static void removeServer(String group, String name) {
 		if(!getServerNamesForGroup(group).contains(name)) return;
 	}
-	
+
 	public static List<String> getServerNamesForGroup(String group) {
-		GroupMode  mode = getMode(group);
+		GroupMode mode = getMode(group);
 		if(mode.equals(GroupMode.INDIVIDUAL)) {
-			Map<Object, Object> map = (Map<Object, Object>) Config.getMap("servers."+group);
+			Map<Object, Object> map = (Map<Object, Object>) Config.getMap("servers." + group);
 			List<String> names = new ArrayList<String>();
 			map.remove("mode");
 			for(Object o : map.keySet()) {
 				names.add(o.toString());
 			}
 			return names;
-		} else if(mode.equals(GroupMode.CLONED)){
-			int count = Config.getInt("servers."+group+".count");
+		} else if(mode.equals(GroupMode.CLONED)) {
+			int count = Config.getInt("servers." + group + ".count");
 			List<String> names = new ArrayList<String>();
 			for(int i = 1; i <= count; i++) {
 				String base = Integer.toString(i);
 				String id = "000".substring(base.length()) + base;
-				names.add(group+"-"+id);
+				names.add(group + "-" + id);
 			}
 			return names;
-		} else return null;
+		} else
+			return null;
 	}
-	
+
 	public static List<String> getPlulginsForGroup(String group) {
 		if(!getServerGroupNames().contains(group)) return null;
 		if(getMode(group).equals(GroupMode.INDIVIDUAL)) return null;
 		List<String> plugins = new ArrayList<String>();
 		try {
-			for(Object object : getList("server."+group+".plugins")) {
+			for(Object object : getList("server." + group + ".plugins")) {
 				plugins.add(object.toString());
 			}
 			return plugins;
@@ -513,14 +610,14 @@ public class Config {
 			return null;
 		}
 	}
-	
+
 	public static List<String> getPluginsForServer(String group, String server) {
 		if(!getServerGroupNames().contains(group)) return null;
 		if(!getServerNamesForGroup(group).contains(server)) return null;
 		if(getMode(group).equals(GroupMode.CLONED)) return null;
 		List<String> plugins = new ArrayList<String>();
 		try {
-			for(Object object : getList("server."+group+"."+server+".plugins")) {
+			for(Object object : getList("server." + group + "." + server + ".plugins")) {
 				plugins.add(object.toString());
 			}
 			return plugins;
@@ -528,22 +625,22 @@ public class Config {
 			return null;
 		}
 	}
-	
+
 	/*
-	 * Following are the EULA status methods. The purpose of holding this
-	 * value is to prevent there from being an issue with the fact that
-	 * the EULA is essentially bypassed by this application. However, the
-	 * EULA still has to be agreed to thanks to the fact that this application
-	 * itself promts the user to read and agree to the EULA, then stores the
-	 * status in the config, and uses that status to generate the EULA files
-	 * for the server. In this way, the user does indeed agree to the EULA, 
-	 * and this application doesn't simply remove that requirement.
+	 * Following are the EULA status methods. The purpose of holding this value
+	 * is to prevent there from being an issue with the fact that the EULA is
+	 * essentially bypassed by this application. However, the EULA still has to
+	 * be agreed to thanks to the fact that this application itself promts the
+	 * user to read and agree to the EULA, then stores the status in the config,
+	 * and uses that status to generate the EULA files for the server. In this
+	 * way, the user does indeed agree to the EULA, and this application doesn't
+	 * simply remove that requirement.
 	 */
-	
+
 	public static void setEULAStatus(boolean status) {
 		setObject("eula", status);
 	}
-	
+
 	public static boolean getEULAStatus() {
 		try {
 			return getBoolean("eula");
@@ -552,12 +649,12 @@ public class Config {
 			return false;
 		}
 	}
-	
+
 	/*
 	 * Following are some simple methods used to modify the data in the config
 	 * As they are only used by this class, I will not provide explanations
 	 */
-	
+
 	static void resetGlobal() {
 		Map<String, Object> def = new HashMap<String, Object>();
 		def.put("name", "Minecraft Server");
@@ -570,7 +667,7 @@ public class Config {
 		setObject("global", def);
 		resetAutoupdate();
 	}
-	
+
 	static void resetAutoupdate() {
 		Map<String, Object> def = new HashMap<String, Object>();
 		def.put("servers", true);
@@ -584,7 +681,7 @@ public class Config {
 			resetGlobal();
 		}
 	}
-	
+
 	static void resetBungeecord() {
 		Map<String, Object> def = new HashMap<String, Object>();
 		def.put("bungeecord", false);
@@ -593,125 +690,125 @@ public class Config {
 		def.put("port", 25565);
 		setObject("bungeecord", def);
 	}
-	
+
 	static String getString(String key) {
 		Object obj = new Object();
 		try {
 			obj = yaml.getValue(key);
-		} catch (FileNotFoundException e) {
+		} catch(FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		return obj.toString();
 	}
-	
+
 	static int getInt(String key) {
 		Object obj = new Object();
 		try {
 			obj = yaml.getValue(key);
-		} catch (FileNotFoundException e) {
+		} catch(FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		return Integer.parseInt(obj.toString());
 	}
-	
+
 	static float getFloat(String key) {
 		Object obj = new Object();
 		try {
 			obj = yaml.getValue(key);
-		} catch (FileNotFoundException e) {
+		} catch(FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		return Float.parseFloat(obj.toString());
 	}
-	
+
 	static double getDouble(String key) {
 		Object obj = new Object();
 		try {
 			obj = yaml.getValue(key);
-		} catch (FileNotFoundException e) {
+		} catch(FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		return Double.parseDouble(obj.toString());
 	}
-	
+
 	static boolean getBoolean(String key) {
 		Object obj = new Object();
 		try {
 			obj = yaml.getValue(key);
-		} catch (FileNotFoundException e) {
+		} catch(FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		return Boolean.parseBoolean(obj.toString());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	static Map<Object, Object> getMap(String key) {
 		Map<Object, Object> map = new HashMap<Object, Object>();
 		try {
 			map = (Map<Object, Object>) yaml.getValue(key);
-		} catch (FileNotFoundException e) {
+		} catch(FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return map;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	static List<Object> getList(String key) {
 		List<Object> list = new ArrayList<Object>();
 		try {
 			list = (List<Object>) yaml.getValue(key);
-		} catch (FileNotFoundException e) {
+		} catch(FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		return list;
 	}
-	
+
 	static void setObject(String key, Object data) {
 		try {
 			yaml.setValue(key, data);
-		} catch (IOException e) {
+		} catch(IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	static void setString(String key, String value) {
 		try {
 			yaml.setValue(key, value);
-		} catch (IOException e) {
+		} catch(IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	static void setList(String key, List<String> data) {
 		try {
 			yaml.setValue(key, data);
-		} catch (IOException e) {
+		} catch(IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	static boolean addToList(String key, String value) {
 		try {
 			return yaml.addToList(key, value);
-		} catch (IOException e) {
+		} catch(IOException e) {
 			return false;
 		}
 	}
-	
+
 	static boolean removeFromList(String key, String value) {
 		try {
 			return yaml.removeFromList(key, value);
-		} catch (IOException e) {
+		} catch(IOException e) {
 			return false;
 		}
 	}
-	
+
 	static String getIP(boolean bungeecord) {
-		if(!bungeecord && getBoolean("bungeecord.bungeecord")
-				&& !getBoolean("bungeecord.proxybypass")) {
+		if(!bungeecord && getBoolean("bungeecord.bungeecord") && !getBoolean("bungeecord.proxybypass")) {
 			return "127.0.0.1";
-		} else return getString("global.ip");
+		} else
+			return getString("global.ip");
 	}
-	
+
 }
