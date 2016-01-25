@@ -18,7 +18,7 @@ public class Main extends Application {
 	}
 	
 	public static void main(String[] args) {
-		//initiate();
+		initiate();
 		if(args.length > 0 && args[0].equals("gui")) {
 			// Start GUI
 			launch(args);
@@ -29,7 +29,7 @@ public class Main extends Application {
 		
 		// Crap to be done
 		System.out.println("Done initializing!");
-		System.out.println(Config.getGlobalName());
+		
 		
 		
 		System.exit(0);

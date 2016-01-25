@@ -10,6 +10,9 @@ import java.util.regex.Pattern;
 
 import com.endro32.proadmin.util.FileManager;
 import com.endro32.proadmin.util.GroupMode;
+import com.endro32.proadmin.util.MapManager;
+import com.endro32.proadmin.util.Plugin;
+import com.endro32.proadmin.util.PluginManager;
 
 public class Config {
 
@@ -494,9 +497,9 @@ public class Config {
 		if(getServerGroupNames().contains(name)) return;
 		Map<String, Object> group = new HashMap<String, Object>();
 		if(mode.equals(GroupMode.INDIVIDUAL)) {
-			group.put("mode", "individual");
+			group.put("mode", GroupMode.INDIVIDUAL);
 		} else if(mode.equals(GroupMode.CLONED)) {
-			group.put("mode", "cloned");
+			group.put("mode", GroupMode.CLONED);
 			group.put("count", 1);
 			group.put("app", "default");
 			group.put("defaultmap", "world");
@@ -553,7 +556,7 @@ public class Config {
 	public static GroupMode getMode(String group) {
 		String mode;
 		try {
-			mode = Config.getString("servers." + group + ".mode");
+			mode = getString("servers." + group + ".mode");
 		} catch(NullPointerException e) {
 			return null;
 		}
@@ -597,12 +600,138 @@ public class Config {
 			return null;
 	}
 
-	public static List<String> getPlulginsForGroup(String group) {
+	public static void setAppForServer(String group, String server, String name) {
+		if(!(getServerGroupNames().contains(group) && getServerNamesForGroup(group)
+				.contains(server) && getMode(group).equals(GroupMode.INDIVIDUAL))) return;
+		try {
+			setObject("servers."+group+"."+server+".app", name);
+		} catch(NullPointerException e) {
+			return; // This should most definitely never happen
+		}
+	}
+	
+	public static void setAppForGroup(String group, String name) {
+		if(!(getServerGroupNames().contains(group) && getMode(group).equals(GroupMode.CLONED)))
+			return;
+		try {
+			setObject("servers."+group+".app", name);
+		} catch(NullPointerException e) {
+			return; // This should most definitely never happen
+		}
+	}
+	
+	public static String getAppForServer(String group, String server) {
+		if(!(getServerGroupNames().contains(group) && getServerNamesForGroup(group)
+				.contains(server) && getMode(group).equals(GroupMode.INDIVIDUAL))) return null;
+		try {
+			return getString("servers."+group+"."+server+".app");
+		} catch(NullPointerException e) {
+			setAppForServer(group, server, "default");
+			return getDefaultApp();
+		}
+	}
+	
+	public static String getAppForGroup(String group) {
+		if(!(getServerGroupNames().contains(group) && getMode(group).equals(GroupMode.CLONED)))
+			return null;
+		try {
+			return getString("servers."+group+".app");
+		} catch(NullPointerException e) {
+			setAppForGroup(group, "default");
+			return getDefaultApp();
+		}
+	}
+	
+	public static void setMapForServer(String group, String server, String name) {
+		if(!(getServerGroupNames().contains(group) && getServerNamesForGroup(group)
+				.contains(server) && getMode(group).equals(GroupMode.INDIVIDUAL))) return;
+		try {
+			setObject("servers."+group+"."+server+".defaultmap", name);
+		} catch(NullPointerException e) {
+			return; // This should most definitely never happen
+		}
+	}
+	
+	public static void setMapForGroup(String group, String name) {
+		if(!(getServerGroupNames().contains(group) && getMode(group).equals(GroupMode.CLONED)))
+			return;
+		try {
+			setObject("servers."+group+".defaultmap", name);
+		} catch(NullPointerException e) {
+			return; // This should most definitely never happen
+		}
+	}
+	
+	public static String getMapForServer(String group, String server) {
+		if(!(getServerGroupNames().contains(group) && getServerNamesForGroup(group)
+				.contains(server) && getMode(group).equals(GroupMode.INDIVIDUAL))) return null;
+		try {
+			return getString("servers."+group+"."+server+".defaultmap");
+		} catch(NullPointerException e) {
+			setMapForServer(group, server, "world");
+			return "world";
+		}
+	}
+	
+	public static String getMapForGroup(String group) {
+		if(!(getServerGroupNames().contains(group) && getMode(group).equals(GroupMode.CLONED)))
+			return null;
+		try {
+			return getString("servers."+group+".defaultmap");
+		} catch(NullPointerException e) {
+			setMapForGroup(group, "world");
+			return "world";
+		}
+	}
+	
+	public static void setIconForServer(String group, String server, String name) {
+		if(!(getServerGroupNames().contains(group) && getServerNamesForGroup(group)
+				.contains(server) && getMode(group).equals(GroupMode.INDIVIDUAL))) return;
+		try {
+			setObject("servers."+group+"."+server+".icon", name);
+		} catch(NullPointerException e) {
+			return; // This should most definitely never happen
+		}
+	}
+	
+	public static void setIconForGroup(String group, String name) {
+		if(!(getServerGroupNames().contains(group) && getMode(group).equals(GroupMode.CLONED)))
+			return;
+		try {
+			setObject("servers."+group+".icon", name);
+		} catch(NullPointerException e) {
+			return; // This should most definitely never happen
+		}
+	}
+	
+	public static String getIconForServer(String group, String server) {
+		if(!(getServerGroupNames().contains(group) && getServerNamesForGroup(group)
+				.contains(server) && getMode(group).equals(GroupMode.INDIVIDUAL))) return null;
+		try {
+			return getString("servers."+group+"."+server+".icon");
+		} catch(NullPointerException e) {
+			setIconForServer(group, server, "server-icon");
+			return "server-icon";
+		}
+	}
+	
+	public static String getIconForGroup(String group) {
+		if(!(getServerGroupNames().contains(group) && getMode(group).equals(GroupMode.CLONED)))
+			return null;
+		try {
+			return getString("servers."+group+".icon");
+		} catch(NullPointerException e) {
+			setIconForGroup(group, "server-icon");
+			return "server-icon";
+		}
+	}	
+	
+	public static List<String> getPluginsForGroup(String group) {
 		if(!getServerGroupNames().contains(group)) return null;
 		if(getMode(group).equals(GroupMode.INDIVIDUAL)) return null;
 		List<String> plugins = new ArrayList<String>();
 		try {
-			for(Object object : getList("server." + group + ".plugins")) {
+			for(Object object : getList("servers." + group + ".plugins")) {
 				plugins.add(object.toString());
 			}
 			return plugins;
@@ -617,7 +746,7 @@ public class Config {
 		if(getMode(group).equals(GroupMode.CLONED)) return null;
 		List<String> plugins = new ArrayList<String>();
 		try {
-			for(Object object : getList("server." + group + "." + server + ".plugins")) {
+			for(Object object : getList("servers." + group + "." + server + ".plugins")) {
 				plugins.add(object.toString());
 			}
 			return plugins;
@@ -626,6 +755,122 @@ public class Config {
 		}
 	}
 
+	public static void addPluginToServer(String group, String server, String name, String version) {
+		if(!(getServerGroupNames().contains(group) && getServerNamesForGroup(group)
+				.contains(server) && getMode(group).equals(GroupMode.INDIVIDUAL))) return;
+		for(Plugin p : PluginManager.getInstalledPlugins()) {
+			if(p.getName().equals(name) && p.getVersion().equals(version)) {
+				addToList("servers."+group+"."+server+".plugins", name+"§"+version);
+			}
+		}
+	}
+	
+	public static void addPluginToGroup(String group, String name, String version) {
+		if(!(getServerGroupNames().contains(group) && getMode(group).equals(GroupMode.CLONED)))
+			return;
+		for(Plugin p : PluginManager.getInstalledPlugins()) {
+			if(p.getName().equals(name) && p.getVersion().equals(version)) {
+				addToList("servers."+group+".plugins", name+"§"+version);
+			}
+		}
+	}
+	
+	public static void removePluginFromServer(String group, String server, String name) {
+		if(!(getServerGroupNames().contains(group) && getServerNamesForGroup(group)
+				.contains(server) && getMode(group).equals(GroupMode.INDIVIDUAL))) return;
+		for(String plugin : getPluginsForServer(group, server)) {
+			String s = "";
+			if(plugin.indexOf("§") < 0) {
+				name = plugin;
+			} else {
+				name = plugin.substring(0, plugin.indexOf("§"));
+			}
+			if(s.equals(name)) {
+				removeFromList("servers."+group+"."+server+".plugins", plugin);
+				break;
+			}
+		}
+	}
+	
+	public static void removePluginFromGroup(String group, String name) {
+		if(!(getServerGroupNames().contains(group) && getMode(group).equals(GroupMode.CLONED)))
+			return;
+		for(String plugin : getPluginsForGroup(group)) {
+			String s = "";
+			if(plugin.indexOf("§") < 0) {
+				name = plugin;
+			} else {
+				name = plugin.substring(0, plugin.indexOf("§"));
+			}
+			if(s.equals(name)) {
+				removeFromList("servers."+group+".plugins", plugin);
+				break;
+			}
+		}
+	}
+	
+	public static List<String> getMapsForGroup(String group) {
+		if(!getServerGroupNames().contains(group)) return null;
+		if(getMode(group).equals(GroupMode.INDIVIDUAL)) return null;
+		List<String> maps = new ArrayList<String>();
+		try {
+			for(Object object : getList("servers." + group + ".maps")) {
+				maps.add(object.toString());
+			}
+			return maps;
+		} catch(NullPointerException e) {
+			return null;
+		}
+	}
+	
+	public static List<String> getMapsForServer(String group, String server) {
+		if(!getServerGroupNames().contains(group)) return null;
+		if(!getServerNamesForGroup(group).contains(server)) return null;
+		if(getMode(group).equals(GroupMode.CLONED)) return null;
+		List<String> maps = new ArrayList<String>();
+		try {
+			for(Object object : getList("servers." + group + "." + server + ".maps")) {
+				maps.add(object.toString());
+			}
+			return maps;
+		} catch(NullPointerException e) {
+			return null;
+		}
+	}
+	
+	public static void addMapToServer(String group, String server, String name, String version) {
+		if(!(getServerGroupNames().contains(group) && getServerNamesForGroup(group)
+				.contains(server) && getMode(group).equals(GroupMode.INDIVIDUAL))) return;
+		if(MapManager.getMaps().contains(name)) {
+			addToList("servers."+group+"."+server+".maps", name+"§"+version);
+		}
+	}
+	
+	public static void addMapToGroup(String group, String name, String version) {
+		if(!(getServerGroupNames().contains(group) && getMode(group).equals(GroupMode.CLONED)))
+			return;
+		if(MapManager.getMaps().contains(name)) {
+			addToList("servers."+group+".maps", name+"§"+version);
+		}
+	}
+	
+	public static void removeMapFromServer(String group, String server, String name) {
+		if(!(getServerGroupNames().contains(group) && getServerNamesForGroup(group)
+				.contains(server) && getMode(group).equals(GroupMode.INDIVIDUAL))) return;
+		if(getMapsForServer(group, server).contains(name)) {
+			addToList("servers."+group+".maps", name);
+		}
+	}
+	
+	public static void removeMapFromGroup(String group, String name) {
+		if(!(getServerGroupNames().contains(group) && getMode(group).equals(GroupMode.CLONED)))
+			return;
+		if(getMapsForGroup(group).contains(name)) {
+			addToList("servers."+group+".maps", name);
+		}
+	}
+	
+	
 	/*
 	 * Following are the EULA status methods. The purpose of holding this value
 	 * is to prevent there from being an issue with the fact that the EULA is

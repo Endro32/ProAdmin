@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.endro32.proadmin.config.BungeeConfig;
 import com.endro32.proadmin.config.Config;
@@ -16,23 +15,13 @@ import com.endro32.proadmin.config.ServerProperties;
 
 public class ServerManager {
 	
-	@SuppressWarnings("unchecked")
-	public static List<String> getMapsForServer(String type, String server) {
-		GroupMode mode = Config.getMode(type);
-		if(mode.equals(GroupMode.INDIVIDUAL)) {
-			return (List<String>) Config.getMap("servers."+type+"."+server+".maps");
-		} else if(mode.equals(GroupMode.CLONED)) {
-			return (List<String>) Config.getMap("servers."+type+".maps");
-		} else return null;
-	}
-	
 	public static void update(String group, String server) {
 		if(Config.getServerNamesForGroup(group).contains(server)) {
 			String app;
 			if(Config.getMode(group).equals(GroupMode.INDIVIDUAL)) {
-				app = Config.getString("servers."+group+"."+server+".app");
+				app = Config.getAppForServer(group, server);
 			} else if(Config.getMode(group).equals(GroupMode.CLONED)){
-				app = Config.getString("servers."+group+".app");
+				app = Config.getAppForGroup(group);
 			} else return;
 			if(app.equals("default")) {
 				app = Config.getDefaultApp();
@@ -78,15 +67,15 @@ public class ServerManager {
 			GroupMode mode = Config.getMode(group);
 			String app;
 			if(mode.equals(GroupMode.CLONED)) {
-				app = Config.getString("servers."+group+".app");
+				app = Config.getAppForGroup(group);
 			} else if(mode.equals(GroupMode.INDIVIDUAL)) {
 				app = "";
 			} else continue;
 			if(app.equals("default")) app = defaultapp;
 			app += ".jar";
 			for(String name : Config.getServerNamesForGroup(group)) {
-				if(mode.equals("individual")) {
-					app = Config.getString("servers."+group+"."+name+".app");
+				if(mode.equals(GroupMode.INDIVIDUAL)) {
+					app = Config.getAppForServer(group, name);
 					if(app.equals("default")) app = defaultapp;
 					app += ".jar";
 				}
@@ -172,8 +161,15 @@ public class ServerManager {
 	
 	public static void updatePlugins(String group, String server) {
 		String[] dat;
-		List<String> plugins = Config.getPluginsForServer(group, server);
-		if(plugins.equals(null)) plugins = Config.getPlulginsForGroup(group);
+		List<String> plugins = new ArrayList<String>();
+		switch(Config.getMode(group)) {
+		case INDIVIDUAL:
+			plugins = Config.getPluginsForServer(group, server);
+			break;
+		case CLONED:
+			plugins = Config.getPluginsForGroup(group);
+			break;
+		}
 		for(String s : plugins) {
 			dat = s.split("§", -1);
 			String name = dat[0];
@@ -196,14 +192,14 @@ public class ServerManager {
 	}
 	
 	public static void updateMaps(String group, String server) {
-		List<Object> objects;
+		List<String> maps;
 		if(Config.getMode(group).equals(GroupMode.INDIVIDUAL)) {
-			objects = Config.getList("servers."+group+"."+server+".maps");
+			maps = Config.getMapsForServer(group, server);
 		} else if(Config.getMode(group).equals(GroupMode.CLONED)){
-			objects = Config.getList("servers."+group+".maps");
+			maps = Config.getMapsForGroup(group);
 		} else return;
-		for(Object o : objects) {
-			MapManager.installToServer(o.toString(), group, server);
+		for(String s : maps) {
+			MapManager.installToServer(s, group, server);
 		}
 	}
 	
@@ -220,9 +216,9 @@ public class ServerManager {
 		String iconName;
 		File target = new File(FileManager.appdir+"/groups/"+group+"/"+server+"/server-icon.png");
 		if(Config.getMode(group).equals(GroupMode.INDIVIDUAL)) {
-			iconName = Config.getString("servers."+group+"."+server+".icon");
+			iconName = Config.getIconForServer(group, server);
 		} else if(Config.getMode(group).equals(GroupMode.CLONED)){
-			iconName = Config.getString("servers."+group+".icon");
+			iconName = Config.getIconForGroup(group);
 		} else return;
 		if(iconName.equals("default")) iconName = Config.getDefaultIcon();
 		icon = new File(FileManager.appdir+"/icons/"+iconName+".png");
