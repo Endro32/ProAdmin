@@ -2,7 +2,7 @@
 ## The Most Powerful Minecraft Server Management Suite
 Designed for servers ranging from the humble Vanilla server all the way to massive minigame servers, ProAdmin is packed with power and flexibility. It features a command-line interface for remote connections and a sleek GUI for fast development on your own PC. And because it's written in Java, you can run it on any platform.
 #### Currently in development
-Altough it's not done yet, I'm working hard to get it finished. I'd like to be able to use it myself (which is where I got the idea), so I have some personal motivation to finish it up. There will be at least one beta release which will support only the comand-line, but will be fully functional and will allow for management of your server that will be much faster than manual management. I hope to get it wrapped up and released hopefully within a month, but I can't make any promises.
+Altough it's not done yet, I'm working hard to get it finished. I'd like to be able to use it myself (which is where I got the idea), so I have some personal motivation to finish it up. I am currently working on the first beta release which will support only the comand-line, but will be fully functional and will allow for management of your server that will be much faster than manual management. The rest of the beta releases after that will be focused on the GUI. I hope to get it wrapped up and released hopefully within a month, but I can't make any promises.
 ##### In the meantime, feel free to enjoy the mostly uncommented source code!
 
 ## Designed for your PC and for your remote server
