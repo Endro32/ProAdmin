@@ -1,5 +1,7 @@
 package com.endro32.proadmin;
 	
+import com.endro32.proadmin.cli.CLI;
+import com.endro32.proadmin.cli.ListCommand;
 import com.endro32.proadmin.config.BungeeConfig;
 import com.endro32.proadmin.config.Config;
 import com.endro32.proadmin.util.AppManager;
@@ -12,30 +14,32 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 	
+	static CLI cli;
+	
 	@Override
 	public void start(Stage primaryStage) {
 		
 	}
 	
 	public static void main(String[] args) {
-		initiate();
+		initialize();
+		System.out.println("Done initializing!");
 		if(args.length > 0 && args[0].equals("gui")) {
 			// Start GUI
 			launch(args);
 		} else {
-			// Start CLI
+			startCLI(); // Start Command-Line Interface
 		}
 		
 		
 		// Crap to be done
-		System.out.println("Done initializing!");
 		
 		
 		
 		System.exit(0);
 	}
 	
-	static void initiate() {
+	static void initialize() {
 		FileManager.updateFileSystem();
 		if(Config.getAutoupdate(Config.AutoUpdate.VANILLA)) {
 			AppManager.updateVanilla();
@@ -61,6 +65,13 @@ public class Main extends Application {
 			ServerManager.updateBungeecordRegistry();
 		}
 		return;
+	}
+	
+	static void startCLI() {
+		cli = new CLI();
+		// Register command executors
+		cli.registerExecutor("list", new ListCommand());
+		cli.listen();
 	}
 	
 }
