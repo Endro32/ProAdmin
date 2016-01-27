@@ -10,6 +10,7 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
@@ -59,20 +60,47 @@ public class FileManager {
 		}
 		for(String group : Config.getServerGroupNames()) {
 			mkdir("groups/"+group);
-			for(String name : Config.getServerNamesForGroup(group)) {
-				mkdir("groups/"+group+"/"+name);
-				mkdir("groups/"+group+"/"+name+"/plugins");
-				File eula = new File("groups/"+group+"/"+name+"/eula.txt");
+			if(Config.getMode(group).equals(GroupMode.INDIVIDUAL)) {
+				for(String name : Config.getServerNamesForGroup(group)) {
+					mkdir("groups/"+group+"/"+name);
+					mkdir("groups/"+group+"/"+name+"/plugins");
+					File eula = new File("groups/"+group+"/"+name+"/eula.txt");
+					if(!eula.exists()) {
+						FileGenerator.generateEULA("groups/"+group+"/"+name, 
+								Config.getEULAStatus());
+					} else if(eula.exists()){
+						FileGenerator.updateEULA("groups/"+group+"/"+name, 
+								Config.getEULAStatus());
+					}
+					extractResource("server.properties", "groups/"+group+"/"+name+"/server.properties",
+							false);
+				}
+			} else if(Config.getMode(group).equals(GroupMode.CLONED)) {
+				List<String> servers = Config.getServerNamesForGroup(group);
+				String first = servers.get(0);
+				mkdir("groups/"+group+"/"+first);
+				mkdir("groups/"+group+"/"+first+"/plugins");
+				File eula = new File("groups/"+group+"/"+first+"/eula.txt");
 				if(!eula.exists()) {
-					FileGenerator.generateEULA("groups/"+group+"/"+name, 
+					FileGenerator.generateEULA("groups/"+group+"/"+first,
 							Config.getEULAStatus());
 				} else if(eula.exists()){
-					FileGenerator.updateEULA("groups/"+group+"/"+name, 
+					FileGenerator.updateEULA("groups/"+group+"/"+first, 
 							Config.getEULAStatus());
 				}
-				extractResource("server.properties", "groups/"+group+"/"+name+"/server.properties",
+				extractResource("server.properties", "groups/"+group+"/"+first+"/server.properties",
 						false);
-			}
+				File firstDir = eula.getParentFile();
+				for(String name : servers) {
+					File target = new File(appdir+"/groups/"+group+"/"+name);
+					if(name.equals(first)) continue;
+					try {
+						FileUtils.copyDirectory(firstDir, target);
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+				}
+			} else continue;
 		}
 		return true;
 	}
