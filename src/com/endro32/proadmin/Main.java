@@ -2,6 +2,7 @@ package com.endro32.proadmin;
 	
 import com.endro32.proadmin.cli.CLI;
 import com.endro32.proadmin.cli.ListCommand;
+import com.endro32.proadmin.cli.UpdateCommand;
 import com.endro32.proadmin.config.BungeeConfig;
 import com.endro32.proadmin.config.Config;
 import com.endro32.proadmin.util.AppManager;
@@ -55,13 +56,14 @@ public class Main extends Application {
 		if(Config.getAutoupdate(Config.AutoUpdate.BUNGEECORD)) {
 			AppManager.updateBungeecord();
 		}
-		if(Config.getBungeecordEnabled()) {
+		boolean bungee = Config.getBungeecordEnabled();
+		if(bungee) {
 			BungeeConfig.initialize();
 		}
 		if(Config.getAutoupdate(Config.AutoUpdate.SERVERS)) {
 			ServerManager.updateAll();
 		}
-		if(Config.getBungeecordEnabled()) {
+		if(bungee) {
 			ServerManager.updateBungeecordRegistry();
 		}
 		return;
@@ -71,6 +73,7 @@ public class Main extends Application {
 		cli = new CLI();
 		// Register command executors
 		cli.registerExecutor("list", new ListCommand());
+		cli.registerExecutor("update", new UpdateCommand());
 		cli.listen();
 	}
 	

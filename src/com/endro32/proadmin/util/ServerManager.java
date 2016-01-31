@@ -17,6 +17,7 @@ public class ServerManager {
 	
 	public static void update(String group, String server) {
 		if(Config.getServerNamesForGroup(group).contains(server)) {
+			System.out.println("");
 			String app;
 			if(Config.getMode(group).equals(GroupMode.INDIVIDUAL)) {
 				app = Config.getAppForServer(group, server);
