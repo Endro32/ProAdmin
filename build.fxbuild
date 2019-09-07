@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<anttasks:AntTask xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anttasks="http://org.eclipse.fx.ide.jdt/1.0" buildDirectory="${project}/build">
-  <deploy splashImage="res/endro32.jpg">
-    <application name="ProAdmin" mainclass="com.endro32.proadmin.Main" version="1.0"/>
-    <info title="ProAdmin" vendor="Endro32"/>
-  </deploy>
-  <signjar/>
-</anttasks:AntTask>

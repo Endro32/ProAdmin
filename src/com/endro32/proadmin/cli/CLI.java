@@ -27,6 +27,7 @@ public class CLI {
 	public void listen() {
 		while(true) {
 			try {
+				System.out.print("$: ");
 				lastInput = input.readLine();
 			} catch(IOException e) {
 				e.printStackTrace();
@@ -35,6 +36,15 @@ public class CLI {
 			if(lastCommand.equals("exit")) break;
 			executeLastCommand();
 		}
+	}
+	
+	public void printHeader() {
+		System.out.println(
+				"    ____                ___        __            _         \n" + 
+				"   / __ \\ _____ ____   /   |  ____/ /____ ___   (_)____   \n" + 
+				"  / /_/ // ___// __ \\ / /| | / __  // __ `__ \\ / // __ \\\n" + 
+				" / ____// /   / /_/ // ___ |/ /_/ // / / / / // // / / /   \n" + 
+				"/_/    /_/    \\____//_/  |_|\\__,_//_/ /_/ /_//_//_/ /_/  \n");
 	}
 	
 	private void parseLastInput() {
@@ -68,6 +78,18 @@ public class CLI {
 	public void registerExecutor(String command, CommandExecutor executor) {
 		if(executors.containsKey(command.toLowerCase())) return;
 		executors.put(command.toLowerCase(), executor);
+	}
+	
+	/**
+	 * Takes a string from a yes/no prompt and generates a boolean
+	 * @param in
+	 * @return
+	 */
+	public static boolean confirm(String in) {
+		in = in.toLowerCase();
+		if(in.isEmpty() || in.startsWith("y"))
+			return true;
+		return false;
 	}
 	
 }

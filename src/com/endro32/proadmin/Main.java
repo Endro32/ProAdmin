@@ -1,41 +1,46 @@
 package com.endro32.proadmin;
 	
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 import com.endro32.proadmin.cli.CLI;
+import com.endro32.proadmin.cli.HelpCommand;
 import com.endro32.proadmin.cli.ListCommand;
 import com.endro32.proadmin.cli.UpdateCommand;
+import com.endro32.proadmin.cli.Wizard;
 import com.endro32.proadmin.config.BungeeConfig;
 import com.endro32.proadmin.config.Config;
 import com.endro32.proadmin.util.AppManager;
 import com.endro32.proadmin.util.FileManager;
 import com.endro32.proadmin.util.ServerManager;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
 
-
-public class Main extends Application {
+public class Main {
 	
 	static CLI cli;
 	
-	@Override
-	public void start(Stage primaryStage) {
-		
-	}
-	
 	public static void main(String[] args) {
-		initialize();
-		System.out.println("Done initializing!");
-		if(args.length > 0 && args[0].equals("gui")) {
-			// Start GUI
-			launch(args);
-		} else {
-			startCLI(); // Start Command-Line Interface
+		//initialize();
+		
+		if(FileManager.isBlankSlate()) {
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			String in = "";
+			System.out.print("It appears there is no global config! Run wizard? [Y/n]: ");
+			try {
+				in = br.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if(CLI.confirm(in)) {
+				; // Run wizard
+			} else {
+				System.out.println("Generating new config instead");
+				Config.resetConfig(false);
+			}
 		}
 		
-		
-		// Crap to be done
-		
-		
+		startCLI(); // Start Command-Line Interface
 		
 		System.exit(0);
 	}
@@ -66,15 +71,25 @@ public class Main extends Application {
 		if(bungee) {
 			ServerManager.updateBungeecordRegistry();
 		}
-		return;
+		System.out.println("Done initializing!");
 	}
 	
+	/**
+	 * Creates CLI object, registers command executors, and begins listening for commands
+	 */
 	static void startCLI() {
 		cli = new CLI();
-		// Register command executors
+		// Register command executors\
+		cli.registerExecutor("help", new HelpCommand());
 		cli.registerExecutor("list", new ListCommand());
 		cli.registerExecutor("update", new UpdateCommand());
+		cli.registerExecutor("wizard", new Wizard());
+		cli.printHeader();
 		cli.listen();
+	}
+	
+	public static CLI getCLI() {
+		return cli;
 	}
 	
 }

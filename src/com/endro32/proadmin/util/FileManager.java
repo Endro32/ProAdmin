@@ -19,7 +19,8 @@ import com.endro32.proadmin.config.Config;
 
 public class FileManager {
 	
-	public static String appdir = System.getProperty("user.dir");
+	//public static String appdir = System.getProperty("user.dir");
+	public static String appdir = "D:\\ProAdmin"; // Non-workspace directory for testing
 	
 	public static boolean mkdir(String path) {
 		File dir = new File(appdir+"/"+path);
@@ -152,6 +153,16 @@ public class FileManager {
 			System.out.println("Failed to extract "+name);
 			return false;
 		}
+		return true;
+	}
+	
+	/**
+	 * Checks to see if config.yml exists in the server's root directory
+	 */
+	public static boolean isBlankSlate() {
+		File file = new File(appdir+"/config.yml");
+		if (file.exists())
+			return false;
 		return true;
 	}
 	

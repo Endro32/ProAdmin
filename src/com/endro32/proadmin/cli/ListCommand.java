@@ -154,5 +154,11 @@ public class ListCommand implements CommandExecutor {
 			System.out.println("- "+s);
 		}
 	}
+
+	@Override
+	public String getDescription() {
+		// TODO Auto-generated method stub
+		return "Lists components of the server that are setup in the config";
+	}
 	
 }

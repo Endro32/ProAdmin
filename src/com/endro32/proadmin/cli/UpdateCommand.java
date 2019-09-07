@@ -40,9 +40,14 @@ public class UpdateCommand implements CommandExecutor {
 		System.out.println("Here are the different ways it can be used:");
 		System.out.println(
 				  "- 'help': Prints the usage info\n"
-				+ "- 'filesystem': Updates all the files on the system"
+				+ "- 'filesystem': Updates all the files on the system\n"
 				+ "- 'servers': Updates all the servers on the system");
 		
+	}
+
+	@Override
+	public String getDescription() {
+		return "Updates components of the server and filesystem";
 	}
 
 }
