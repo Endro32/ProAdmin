@@ -3,7 +3,7 @@ global:
   motd: A Minecraft Server
   ip: 0.0.0.0
   startport: 25566
-  defaultapp: vanilla-latest
+  defaultapp: vanilla-1.8.9
   autoupdate:
     servers: true
     vanilla: true
@@ -18,9 +18,20 @@ bungeecord:
   version: 1105
   port: 25565
 servers:
-  default:
+  groupa:
+    mode: cloned
+    count: 10
+    app: vanilla-1.8.9
+    defaultmap: world
+    icon: server-icon
+    plugins:
+    - PermissionsEx§1.23.3
+    - WorldGuard
+    maps:
+    - world
+  groupb:
     mode: individual
-    default:
+    primary:
       app: default
       defaultmap: Survival
       icon: default
@@ -28,5 +39,6 @@ servers:
       - PermissionsEx
       - Multiverse-Core
       maps:
-      - world
+      - Survival
+      - Creative
 eula: true

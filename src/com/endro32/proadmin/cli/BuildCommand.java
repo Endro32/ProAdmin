@@ -12,8 +12,7 @@ public class BuildCommand implements CommandExecutor {
 			return true;
 		} else if(parameters.length >= 1) {
 			if(parameters[0].equals("help")) {
-				showUsage();
-				return true;
+				return false;
 			}
 			AppManager.runBuildTools(parameters[0]);
 			return true;

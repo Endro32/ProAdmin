@@ -67,10 +67,10 @@ public class FileManager {
 		mkdir("maps");
 		mkdir("apps");
 		mkdir("groups");
-		extractResource("latest.yml", "apps/latest.yml", false);
+		/*extractResource("latest.yml", "apps/latest.yml", false);
 		if(Config.getAutoupdate(Config.AutoUpdate.SPIGOT)) {
 			mkdir("buildtools");
-		}
+		}*/
 		if(Config.getBungeecordEnabled()) {
 			mkdir("bungeecord");
 			extractResource("bungeeconfig.yml", "bungeecord/config.yml", false);
@@ -98,7 +98,7 @@ public class FileManager {
 						e.printStackTrace();
 					}
 				}
-			} else continue;
+			}
 		}
 		return true;
 	}
@@ -150,7 +150,7 @@ public class FileManager {
 				Files.move(tmp.toPath(), target.toPath());
 			}
 			System.out.println("Successfully downloaded to "+appdir+"/"+path);
-		} catch (IOException e) {
+		} catch (IOException e) { 
 			System.out.println("Failed to download "+url);
 			return false;
 		}

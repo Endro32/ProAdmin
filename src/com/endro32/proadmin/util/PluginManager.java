@@ -19,9 +19,13 @@ import com.endro32.proadmin.config.YAMLConfig;
 
 public class PluginManager {
 
-	static List<Plugin> plugins = new ArrayList<Plugin>();
+	List<Plugin> plugins = new ArrayList<Plugin>();
 	
-	public static void loadPlugins() {
+	/**
+	 * Scans plugins directory and registers each jar file to the plugins list.
+	 * Automatically retrieves name and version data from plugin.yml
+	 */
+	public void loadPlugins() {
 		plugins.clear();
 		File folder = new File(FileManager.appdir+"/plugins");
 		File[] listOfFiles = folder.listFiles();
@@ -70,11 +74,20 @@ public class PluginManager {
         }
 	}
 	
-	public static List<Plugin> getInstalledPlugins() {
+	/**
+	 * Get a list of all available plugins
+	 * @return Available plugins
+	 */
+	public List<Plugin> getInstalledPlugins() {
 		return plugins;
 	}
 	
-	public static List<String> getPluginNames() {
+	/**
+	 * Get a list of the names of all available plugins
+	 * Combines multiple versions into one name
+	 * @return Available plugins by name
+	 */
+	public List<String> getPluginNames() {
 		List<String> names = new ArrayList<String>();
 		for(Plugin plugin : plugins) {
 			String name = plugin.getName();
@@ -85,7 +98,12 @@ public class PluginManager {
 		return names;
 	}
 	
-	public static List<String> getVersionsForPlugin(String pluginName) {
+	/**
+	 * Get all available versions of a plugin
+	 * @param pluginName Name of plugin
+	 * @return Available versions
+	 */
+	public List<String> getVersionsForPlugin(String pluginName) {
 		List<String> versions = new ArrayList<String>();
 		for(Plugin plugin : plugins) {
 			String name = plugin.getName();
@@ -97,7 +115,12 @@ public class PluginManager {
 		return versions;
 	}
 	
-	public static String getLatestVersion(String name) {
+	/**
+	 * Get latest available version of a plugin
+	 * @param name Name of plugin
+	 * @return Version
+	 */
+	public String getLatestVersion(String name) {
 		String version = "0";
 		int ver = 0;
 		for(Plugin plugin : plugins) {
@@ -110,7 +133,15 @@ public class PluginManager {
 		return version;
 	}
 	
-	public static boolean installToServer(String plugin, String version, String group, String name) {
+	/**
+	 * Installs a plugin to a server
+	 * @param plugin Plugin name to be installed
+	 * @param version Plugin version to be installed
+	 * @param group Group of server to be installed to
+	 * @param name Name of server to be installed to
+	 * @return
+	 */
+	public boolean installToServer(String plugin, String version, String group, String name) {
 		for(Plugin p : plugins) {
 			if(p.getName().equals(plugin) && p.getVersion().equals(version)) {
 				File a = new File(p.getAbsolutePath());

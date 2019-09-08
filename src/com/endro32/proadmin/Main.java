@@ -8,22 +8,31 @@ import com.endro32.proadmin.cli.BuildCommand;
 import com.endro32.proadmin.cli.CLI;
 import com.endro32.proadmin.cli.HelpCommand;
 import com.endro32.proadmin.cli.ListCommand;
+import com.endro32.proadmin.cli.NewCommand;
 import com.endro32.proadmin.cli.UpdateCommand;
 import com.endro32.proadmin.cli.Wizard;
 import com.endro32.proadmin.config.BungeeConfig;
 import com.endro32.proadmin.config.Config;
 import com.endro32.proadmin.util.AppManager;
 import com.endro32.proadmin.util.FileManager;
+import com.endro32.proadmin.util.PluginManager;
 import com.endro32.proadmin.util.ServerManager;
 
 
 public class Main {
 	
 	static CLI cli;
+	static PluginManager pluginManager;
 	
 	public static void main(String[] args) {
 		//initialize();
 		
+		cli = new CLI();
+		pluginManager = new PluginManager();
+		
+		cli.printHeader();
+		
+		// Prompt to run wizard if there is no global config
 		if(FileManager.isBlankSlate()) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			String in = "";
@@ -41,7 +50,15 @@ public class Main {
 			}
 		}
 		
-		startCLI(); // Start Command-Line Interface
+		// Register command executors
+		cli.registerExecutor("help", new HelpCommand());
+		cli.registerExecutor("list", new ListCommand());
+		cli.registerExecutor("update", new UpdateCommand());
+		cli.registerExecutor("wizard", new Wizard());
+		cli.registerExecutor("build", new BuildCommand());
+		cli.registerExecutor("new", new NewCommand());
+		
+		cli.listen(); // Start Command-Line Interface
 		
 		System.exit(0);
 	}
@@ -76,22 +93,19 @@ public class Main {
 	}
 	
 	/**
-	 * Creates CLI object, registers command executors, and begins listening for commands
+	 * Returns the main CLI object
+	 * @return CLI
 	 */
-	static void startCLI() {
-		cli = new CLI();
-		// Register command executors\
-		cli.registerExecutor("help", new HelpCommand());
-		cli.registerExecutor("list", new ListCommand());
-		cli.registerExecutor("update", new UpdateCommand());
-		cli.registerExecutor("wizard", new Wizard());
-		cli.registerExecutor("build", new BuildCommand());
-		cli.printHeader();
-		cli.listen();
-	}
-	
 	public static CLI getCLI() {
 		return cli;
+	}
+	
+	/**
+	 * Returns the main PluginManager
+	 * @return Plugin Manager
+	 */
+	public static PluginManager getPluginManager() {
+		return pluginManager;
 	}
 	
 }

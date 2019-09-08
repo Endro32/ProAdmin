@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.endro32.proadmin.util.Server;
+
 public class CLI {
 	
 	BufferedReader input;
@@ -17,6 +19,9 @@ public class CLI {
 	String lastCommand;
 	String[] parameters;
 	
+	String selGroup;
+	Server selServer;
+	
 	Map<String, CommandExecutor> executors;
 	
 	public CLI() {
@@ -24,6 +29,9 @@ public class CLI {
 		executors = new HashMap<String, CommandExecutor>();
 	}
 	
+	/**
+	 * Begins an infinite loop of reading input lines, ending when the user types 'exit'
+	 */
 	public void listen() {
 		while(true) {
 			try {
@@ -38,15 +46,24 @@ public class CLI {
 		}
 	}
 	
+	/**
+	 * Print a beautiful ProAdmin text art banner
+	 */
 	public void printHeader() {
 		System.out.println(
-				"    ____                ___        __            _         \n" + 
-				"   / __ \\ _____ ____   /   |  ____/ /____ ___   (_)____   \n" + 
-				"  / /_/ // ___// __ \\ / /| | / __  // __ `__ \\ / // __ \\\n" + 
-				" / ____// /   / /_/ // ___ |/ /_/ // / / / / // // / / /   \n" + 
-				"/_/    /_/    \\____//_/  |_|\\__,_//_/ /_/ /_//_//_/ /_/  \n");
+				  "    ____                ___        __            _         \n"
+				+ "   / __ \\ _____ ____   /   |  ____/ /____ ___   (_)____   \n"
+				+ "  / /_/ // ___// __ \\ / /| | / __  // __ `__ \\ / // __ \\\n"
+				+ " / ____// /   / /_/ // ___ |/ /_/ // / / / / // // / / /   \n"
+				+ "/_/    /_/    \\____//_/  |_|\\__,_//_/ /_/ /_//_//_/ /_/  \n\n"
+				+ "Version: 0.0.1                                By Endro32\n"
+				+ "Enter 'exit' to quit, 'help' for help\n"
+				+ "------------------------------------------------------------");
 	}
 	
+	/**
+	 * Parses lastInput string to 'lastCommand' string and 'parameters' string array
+	 */
 	private void parseLastInput() {
 		List<String> list = new ArrayList<String>();
 		try {
@@ -61,6 +78,12 @@ public class CLI {
 		parameters = list.toArray(new String[list.size()]);
 	}
 	
+	/**
+	 * Finds the executor responsible for the last command entered by the user,
+	 * and invokes the onCommand method of that executor.
+	 * Yells at user if the command isn't registered,
+	 * shows usage if onCommand returns false
+	 */
 	private void executeLastCommand() {
 		if(lastCommand == null || parameters == null) parseLastInput();
 		if(!executors.containsKey(lastCommand)) {
@@ -75,6 +98,11 @@ public class CLI {
 		}
 	}
 	
+	/**
+	 * Register an executor in the map
+	 * @param command String the user will enter
+	 * @param executor CommandExecutor object that will handle the command
+	 */
 	public void registerExecutor(String command, CommandExecutor executor) {
 		if(executors.containsKey(command.toLowerCase())) return;
 		executors.put(command.toLowerCase(), executor);
@@ -82,8 +110,8 @@ public class CLI {
 	
 	/**
 	 * Takes a string from a yes/no prompt and generates a boolean
-	 * @param in
-	 * @return
+	 * @param in String input from the user
+	 * @return Boolean representation
 	 */
 	public static boolean confirm(String in) {
 		in = in.toLowerCase();

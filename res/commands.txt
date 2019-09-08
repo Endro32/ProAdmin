@@ -5,7 +5,7 @@
   delete group <name>				Removes a server group
   delete server <name>				Deletes a server. Curent type must be individual
   select group <group>				Sets group to work with
-  set server <name>					Sets server to work with. Current type must be individual
+  select server <name>					Sets server to work with. Current type must be individual
   close								Closes current working area (server or type)
   mode								Gets type of current working type
   

@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.endro32.proadmin.Main;
 import com.endro32.proadmin.util.FileManager;
 import com.endro32.proadmin.util.GroupMode;
 import com.endro32.proadmin.util.MapManager;
 import com.endro32.proadmin.util.Plugin;
-import com.endro32.proadmin.util.PluginManager;
 
 public class Config {
 
@@ -497,9 +497,9 @@ public class Config {
 		if(getServerGroupNames().contains(name)) return;
 		Map<String, Object> group = new HashMap<String, Object>();
 		if(mode.equals(GroupMode.INDIVIDUAL)) {
-			group.put("mode", GroupMode.INDIVIDUAL);
+			group.put("mode", "individual");
 		} else if(mode.equals(GroupMode.CLONED)) {
-			group.put("mode", GroupMode.CLONED);
+			group.put("mode", "cloned");
 			group.put("count", 1);
 			group.put("app", "default");
 			group.put("defaultmap", "world");
@@ -510,7 +510,7 @@ public class Config {
 			return; // Should never happen
 		try {
 			setObject("servers." + name, group);
-		} catch(NullPointerException e) {
+		} catch(NullPointerException e) { // If the servers entry of the config doesn't exist
 			Map<String, Object> servers = new HashMap<String, Object>();
 			servers.put(name, group);
 			setObject("servers", servers);
@@ -758,7 +758,7 @@ public class Config {
 	public static void addPluginToServer(String group, String server, String name, String version) {
 		if(!(getServerGroupNames().contains(group) && getServerNamesForGroup(group)
 				.contains(server) && getMode(group).equals(GroupMode.INDIVIDUAL))) return;
-		for(Plugin p : PluginManager.getInstalledPlugins()) {
+		for(Plugin p : Main.getPluginManager().getInstalledPlugins()) {
 			if(p.getName().equals(name) && p.getVersion().equals(version)) {
 				addToList("servers."+group+"."+server+".plugins", name+"§"+version);
 			}
@@ -768,7 +768,7 @@ public class Config {
 	public static void addPluginToGroup(String group, String name, String version) {
 		if(!(getServerGroupNames().contains(group) && getMode(group).equals(GroupMode.CLONED)))
 			return;
-		for(Plugin p : PluginManager.getInstalledPlugins()) {
+		for(Plugin p : Main.getPluginManager().getInstalledPlugins()) {
 			if(p.getName().equals(name) && p.getVersion().equals(version)) {
 				addToList("servers."+group+".plugins", name+"§"+version);
 			}

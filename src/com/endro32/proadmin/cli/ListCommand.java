@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.endro32.proadmin.Main;
 import com.endro32.proadmin.config.Config;
 import com.endro32.proadmin.util.GroupMode;
 import com.endro32.proadmin.util.MapManager;
@@ -86,39 +87,52 @@ public class ListCommand implements CommandExecutor {
 	}
 	
 	void printAvailablePlugins() {
+		PluginManager pm = Main.getPluginManager();
 		System.out.println("Available plugins:");
-		for(Plugin p : PluginManager.getInstalledPlugins()) {
+		for(Plugin p : pm.getInstalledPlugins()) {
 			System.out.println("- "+p.getName()+" version "+p.getVersion());
 		}
 	}
 	
 	void printGroupPlugins(String group) {
+		if(!Config.getServerGroupNames().contains(group)) {
+			System.out.println(group+" is not a valid group");
+			return;
+		}
 		if(Config.getMode(group).equals(GroupMode.INDIVIDUAL)) {
 			System.out.println(group+" is  not a cloned group.\n"
 					+ "Use 'list plugins installed "+group+" <server>' to get plugins lists for this group.");
 			return;
 		}
+		
+		PluginManager pm = Main.getPluginManager();
 		System.out.println("Plugins for "+group+":");
 		for(String p: Config.getPluginsForGroup(group)) {
 			List<String> plugin = new ArrayList<String>(Arrays.asList(p.split("§")));
 			if(plugin.size() < 2) {
-				plugin.add(PluginManager.getLatestVersion(plugin.get(0)));
+				plugin.add(pm.getLatestVersion(plugin.get(0)));
 			}
 			System.out.println(plugin.get(0)+" version "+plugin.get(1));
 		}
 	}
 	
 	void printServerPlugins(String group, String server) {
+		if(!Config.getServerNamesForGroup(group).contains(server)) {
+			System.out.println(group+" is not a valid server in this group");
+			return;
+		}
 		if(Config.getMode(group).equals(GroupMode.CLONED)) {
 			System.out.println(group+" is a cloned group.\n"
 					+ "Use 'list plugins installed "+group+"' to get plugins list for this group.");
 			return;
 		}
+		
+		PluginManager pm = Main.getPluginManager();
 		System.out.println("Plugins for "+server+":");
 		for(String p: Config.getPluginsForServer(group, server)) {
 			List<String> plugin = new ArrayList<String>(Arrays.asList(p.split("§")));
 			if(plugin.size() < 2) {
-				plugin.add(PluginManager.getLatestVersion(plugin.get(0)));
+				plugin.add(pm.getLatestVersion(plugin.get(0)));
 			}
 			System.out.println(plugin.get(0)+" version "+plugin.get(1));
 		}

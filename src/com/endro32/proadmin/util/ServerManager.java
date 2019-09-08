@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.endro32.proadmin.Main;
 import com.endro32.proadmin.config.BungeeConfig;
 import com.endro32.proadmin.config.Config;
 import com.endro32.proadmin.config.ServerProperties;
@@ -91,7 +92,7 @@ public class ServerManager {
 			}
 		}
 		if(Config.getServerIconsEnabled()) updateIcons();
-		PluginManager.loadPlugins();
+		Main.getPluginManager().loadPlugins();
 		ServerManager.updatePlugins();
 		MapManager.loadMaps();
 		ServerManager.updateMaps();
@@ -183,9 +184,9 @@ public class ServerManager {
 			if(dat.length >= 2) {
 				version = dat[1];
 			} else {
-				version = PluginManager.getLatestVersion(name);
+				version = Main.getPluginManager().getLatestVersion(name);
 			}
-			PluginManager.installToServer(name, version, group, server);
+			Main.getPluginManager().installToServer(name, version, group, server);
 		}
 	}
 	
