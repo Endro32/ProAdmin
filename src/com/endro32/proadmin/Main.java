@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import com.endro32.proadmin.cli.BuildCommand;
 import com.endro32.proadmin.cli.CLI;
 import com.endro32.proadmin.cli.HelpCommand;
 import com.endro32.proadmin.cli.ListCommand;
@@ -84,6 +85,7 @@ public class Main {
 		cli.registerExecutor("list", new ListCommand());
 		cli.registerExecutor("update", new UpdateCommand());
 		cli.registerExecutor("wizard", new Wizard());
+		cli.registerExecutor("build", new BuildCommand());
 		cli.printHeader();
 		cli.listen();
 	}

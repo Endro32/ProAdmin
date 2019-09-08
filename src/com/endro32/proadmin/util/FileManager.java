@@ -22,12 +22,22 @@ public class FileManager {
 	//public static String appdir = System.getProperty("user.dir");
 	public static String appdir = "D:\\ProAdmin"; // Non-workspace directory for testing
 	
+	/**
+	 * Creates a directory at the specified path if it doesn't already exist
+	 * If a file exists at the path but isn't a directory, it will be overwritten
+	 * @param path
+	 * @return True if directory created, false if not
+	 */
 	public static boolean mkdir(String path) {
 		File dir = new File(appdir+"/"+path);
+		if(dir.exists() && !dir.isDirectory())
+			dir.delete();
 		if(!dir.exists()) {
 			System.out.println("Creating directory "+appdir+"/"+path);
 			return dir.mkdir();
-		} else return false;
+		} else {
+			return false;
+		}
 	}
 	
 	public static boolean delFile(String path) {
@@ -116,20 +126,29 @@ public class FileManager {
 		}
 	}
 	
+	/**
+	 * Downloads a file from the internet
+	 * @param url URL of file to download
+	 * @param path Path of downloaded file within app directory
+	 * @param replaceExisting Whether or not to overwrite an already existing file
+	 * @return True if download is successful, false if not
+	 */
 	public static boolean download(URL url, String path, boolean replaceExisting) {
 		try {
 			System.out.println("Attempting to download "+url+"...");
-			ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-			FileOutputStream fos = new FileOutputStream("tmp");
-			fos.getChannel().transferFrom(rbc,  0, Long.MAX_VALUE);
 			File tmp = new File(appdir+"/tmp");
+			if(tmp.exists())
+				tmp.delete();
+			ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+			FileOutputStream fos = new FileOutputStream(appdir+"/tmp");
+			fos.getChannel().transferFrom(rbc,  0, Long.MAX_VALUE);
+			fos.close();
 			File target = new File(appdir+"/"+path);
 			if(replaceExisting) {
 				Files.move(tmp.toPath(), target.toPath(), REPLACE_EXISTING);
 			} else {
 				Files.move(tmp.toPath(), target.toPath());
 			}
-			fos.close();
 			System.out.println("Successfully downloaded to "+appdir+"/"+path);
 		} catch (IOException e) {
 			System.out.println("Failed to download "+url);

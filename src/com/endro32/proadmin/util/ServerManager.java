@@ -99,6 +99,11 @@ public class ServerManager {
 		updatePorts();
 	}
 	
+	/**
+	 * First updates ports in the bungee config (if bungee is enabled)
+	 * Then recursively sets ports to match in every server's properties file
+	 * @return
+	 */
 	public static boolean updatePorts() {
 		ServerProperties sp;
 		int port = Config.getGlobalStartPort();

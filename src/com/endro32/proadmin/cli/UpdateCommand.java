@@ -30,6 +30,9 @@ public class UpdateCommand implements CommandExecutor {
 					return AppManager.updateSnapshot();
 				}
 			}
+		case "buildtools":
+			AppManager.updateBuildTools();
+			return true;
 		}
 		return false;
 	}

@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -146,30 +147,65 @@ public class AppManager {
 		return true;
 	}
 	
+	/**
+	 * Downloads latest stable BuildTools jar from SpigotMC.org
+	 * Creates buildtools directory if not already present
+	 * @return True if update is successful
+	 */
 	public static boolean updateBuildTools() {
+		FileManager.mkdir("buildtools");
 		URL url = null;
 		try {
-			url = new URL("https://hub.spigotmc.org/jenkins/job/BuildTools/"
-					+ "lastSuccessfulBuild/artifact/target/BuildTools.jar");
+			url = new URL("https://hub.spigotmc.org/jenkins/job/BuildTools/lastStableBuild/"
+					+ "artifact/target/BuildTools.jar");
 		} catch (MalformedURLException e) { // Should never occur
 			e.printStackTrace();
 		}
 		return FileManager.download(url, "buildtools/BuildTools.jar", true);
 	}
 	
-	public static boolean runBuildTools() {
+	/**
+	 * Runs Build Tools to download Vanilla, Craftbukkit, and Spigot jars for specified version
+	 * Puts jar files in apps directory
+	 * @param mcversion Version of Minecraft to build for
+	 * @return True if BuildTools runs successfully
+	 */
+	public static boolean runBuildTools(String mcversion) {
 		File dir = new File(FileManager.appdir+"/buildtools");
-		ProcessBuilder processBuilder = new ProcessBuilder("/usr/bin/xterm",
-				"-e", "java -jar BuildTools.jar");
-		processBuilder.directory(dir);
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "BuildTools.jar", "--rev",
+				mcversion, "--output-dir", FileManager.appdir+"/apps");
+		pb.directory(dir);
 		try {
-			processBuilder.start();
+			Process proc = pb.start();
+			BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+			String line = null;
+			while((line = in.readLine()) != null)
+					System.out.println(line);
+			
+			// Copy vanilla server jar to apps folder
+			File work = new File(FileManager.appdir+"/buildtools/work");
+			for(File f : work.listFiles()) {
+				if(f.getName().startsWith("minecraft_server.")) {
+					String target = FileManager.appdir+"/apps/"+f.getName().replace("minecraft_server.", "vanilla-");
+					System.out.println("Copying "+f.getName()+" to "+target);
+					Files.copy(f.toPath(), Paths.get(target));
+					System.out.println("  - Saved as "+target);
+				}
+			}
+			
 		} catch (IOException e) {
-			FileManager.updateFileSystem();
-			updateBuildTools();
-			return false;
+			e.printStackTrace();
 		}
+		
 		return true;
+	}
+	
+	/**
+	 * Runs Build Tools to download Vanilla, Craftbukkit, and Spigot jars for latest Minecraft version
+	 * @return True if BuildTools runs successfully
+	 */
+	public static boolean runBuildTools() {
+		return runBuildTools("latest");
 	}
 	
 	public static boolean updateSpigot() {
