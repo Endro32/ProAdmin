@@ -120,4 +120,12 @@ public class CLI {
 		return false;
 	}
 	
+	public String getSelectedGroup() {
+		return selGroup;
+	}
+	
+	public Server getSelectedServer() {
+		return selServer;
+	}
+	
 }

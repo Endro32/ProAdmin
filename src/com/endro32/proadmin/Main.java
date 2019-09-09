@@ -56,7 +56,7 @@ public class Main {
 		cli.registerExecutor("update", new UpdateCommand());
 		cli.registerExecutor("wizard", new Wizard());
 		cli.registerExecutor("build", new BuildCommand());
-		cli.registerExecutor("new", new NewCommand());
+		cli.registerExecutor("new", new NewCommand(cli));
 		
 		cli.listen(); // Start Command-Line Interface
 		
@@ -107,5 +107,13 @@ public class Main {
 	public static PluginManager getPluginManager() {
 		return pluginManager;
 	}
+	
+	/*
+	 * Task list:
+	 * Implement config create and delete server methods
+	 * Build server class
+	 * Create server management system
+	 * Make new server select newly created sever using the management system
+	 */
 	
 }

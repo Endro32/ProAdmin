@@ -42,6 +42,10 @@ public class Config {
 	public static enum AutoUpdate {
 		SERVERS, VANILLA, SNAPSHOT, SPIGOT, BUNGEECORD
 	}
+	
+	public static enum AvailableType {
+		APP, PLUGIN, MAP
+	}
 
 	/**
 	 * Re-extracts the the default configuration from the resources package
@@ -569,12 +573,15 @@ public class Config {
 	}
 
 	public static void createServer(String group, String name) {
-		if(!getServerGroupNames().contains(name)) createGroup(group, GroupMode.INDIVIDUAL);
+		if(!getServerGroupNames().contains(name))
+			createGroup(group, GroupMode.INDIVIDUAL);
 		if(getServerNamesForGroup(group).contains(name)) return;
+		// TODO implement method
 	}
 
 	public static void removeServer(String group, String name) {
 		if(!getServerNamesForGroup(group).contains(name)) return;
+		// TODO implement method
 	}
 
 	public static List<String> getServerNamesForGroup(String group) {
@@ -893,6 +900,40 @@ public class Config {
 			setEULAStatus(false);
 			return false;
 		}
+	}
+	
+	public static void setAvailable(AvailableType type, List<String> data) {
+		switch(type) {
+		case APP:
+			setList("installed.apps", data);
+			break;
+		case PLUGIN:
+			setList("installed.plugins", data);
+			break;
+		case MAP:
+			setList("installed.maps", data);
+			break;
+		}
+	}
+	
+	public static List<String> getAvailable(AvailableType type) {
+		List<String> retData = new ArrayList<String>();
+		List<Object> list = new ArrayList<Object>();
+		switch(type) {
+		case APP:
+			list = getList("installed.apps");
+			break;
+		case PLUGIN:
+			list = getList("installed.plugins");
+			break;
+		case MAP:
+			list = getList("installed.maps");
+			break;
+		}
+		for(Object o : list) {
+			retData.add(o.toString());
+		}
+		return retData;
 	}
 
 	/*

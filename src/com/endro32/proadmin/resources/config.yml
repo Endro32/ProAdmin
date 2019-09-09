@@ -30,3 +30,7 @@ servers:
       maps:
       - world
 eula: true
+installed:
+  apps: []
+  plugins: []
+  maps: []

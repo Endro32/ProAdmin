@@ -31,9 +31,8 @@ public class PluginManager {
 		File[] listOfFiles = folder.listFiles();
 		List<File> jars = new ArrayList<File>();
 		for (File file : listOfFiles) {
-			String filename = file.getName();
-			String extension = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
-			if(extension.equals("jar")) jars.add(file);
+			if(file.getName().endsWith(".jar"))
+				jars.add(file);
 		}
 		URLClassLoader loader;
 		YAMLConfig yaml;

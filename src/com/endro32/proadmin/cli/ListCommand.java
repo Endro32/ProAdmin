@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.endro32.proadmin.Main;
 import com.endro32.proadmin.config.Config;
+import com.endro32.proadmin.util.AppManager;
 import com.endro32.proadmin.util.GroupMode;
 import com.endro32.proadmin.util.MapManager;
 import com.endro32.proadmin.util.Plugin;
@@ -30,22 +31,27 @@ public class ListCommand implements CommandExecutor {
 			}
 			return false;
 		case "plugins":
-			if(parameters.length == 2 && parameters[1].equals("available")) {
+			if(parameters.length == 1) {
 				printAvailablePlugins();
-			} else if(parameters.length == 3 && parameters[1].equals("installed")) {
-				printGroupPlugins(parameters[2]);
-			} else if(parameters.length >= 4 && parameters[1].equals("installed")) {
-				printServerPlugins(parameters[2], parameters[3]);
+			} else if(parameters.length == 2) {
+				printGroupPlugins(parameters[1]);
+			} else if(parameters.length >= 3) {
+				printServerPlugins(parameters[1], parameters[2]);
 			} else return false;
 			return true;
 		case "maps":
-			if(parameters.length == 2 && parameters[1].equals("available")) {
+			if(parameters.length == 1) {
 				printAvailableMaps();
-			} else if(parameters.length == 3 && parameters[1].equals("installed")) {
-				printGroupMaps(parameters[2]);
-			} else if(parameters.length >= 4 && parameters[1].equals("installed")) {
-				printServerMaps(parameters[2], parameters[3]);
+			} else if(parameters.length == 2) {
+				printGroupMaps(parameters[1]);
+			} else if(parameters.length >= 3) {
+				printServerMaps(parameters[1], parameters[2]);
 			} else return false;
+			return true;
+		case "apps":
+			System.out.println("Available apps:");
+			for(String s : AppManager.getAvailableApps())
+				System.out.println("- "+s);
 			return true;
 		}
 		return false;

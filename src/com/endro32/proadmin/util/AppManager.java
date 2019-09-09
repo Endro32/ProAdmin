@@ -12,6 +12,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -288,6 +290,17 @@ public class AppManager {
 	
 	public static int versionToInt(String version) {
 		return Integer.parseInt(version.replaceAll("[^\\d]", ""));
+	}
+	
+	public static List<String> getAvailableApps() {
+		List<String> list = new ArrayList<String>();
+		File appsdir = new File(FileManager.appdir+"/apps");
+		for(File f : appsdir.listFiles()) {
+			if(f.getName().endsWith(".jar")) {
+				list.add(f.getName().substring(0, f.getName().length()-4));
+			}
+		}
+		return list;
 	}
 	
 }

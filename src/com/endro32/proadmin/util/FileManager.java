@@ -78,6 +78,16 @@ public class FileManager {
 		if(Config.getServerIconsEnabled()) {
 			mkdir("icons");
 		}
+		return true;
+	}
+	
+	/**
+	 * Updates server file tree to match the servers and groups in the config.
+	 * Does not remove old servers and groups.
+	 * @return True if successful
+	 */
+	public static boolean updateServerTree() {
+		mkdir("groups");
 		for(String group : Config.getServerGroupNames()) {
 			mkdir("groups/"+group);
 			if(Config.getMode(group).equals(GroupMode.INDIVIDUAL)) {
@@ -116,8 +126,10 @@ public class FileManager {
 				FileGenerator.updateEULA("groups/"+group+"/"+server, 
 						Config.getEULAStatus());
 			}
-			extractResource("server.properties", "groups/"+group+"/"+server+"/server.properties",
-					false);
+			if(!extractResource("server.properties", "groups/"+group+"/"+server+"/server.properties",
+					false)) {
+				System.out.print("Server.properties extraction failed for server "+server+" in group "+group);
+			}
 			System.out.println("Successfully updated "+server);
 			return true;
 		} catch(Exception e) {
@@ -165,6 +177,8 @@ public class FileManager {
 			if(replaceExisting) {
 				Files.copy(link, file.toPath(), REPLACE_EXISTING);
 			} else {
+				if(file.exists())
+					return true;
 				Files.copy(link, file.toPath());
 			}
 			System.out.println("Succesfully extracted to "+appdir+"/"+target);

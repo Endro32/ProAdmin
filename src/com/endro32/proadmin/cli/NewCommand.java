@@ -10,9 +10,16 @@ import com.endro32.proadmin.util.GroupMode;
 
 public class NewCommand implements CommandExecutor {
 
+	CLI cli;
+	
+	public NewCommand(CLI cli) {
+		this.cli = cli;
+	}
+	
 	@Override
 	public boolean onCommand(String command, String[] parameters) {
-		if(!command.equalsIgnoreCase("new") || parameters.length < 1) return false;
+		if(!command.equalsIgnoreCase("new") || parameters.length < 1)
+			return false;
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
 		if(parameters.length == 1) {
@@ -37,10 +44,44 @@ public class NewCommand implements CommandExecutor {
 				else
 					mode = GroupMode.INDIVIDUAL;
 				Config.createGroup(gname, mode);
-				FileManager.updateFileSystem();
-				
+				FileManager.updateServerTree();
+				cli.selGroup = gname;
 				return true;
 			case "server":
+				String group;
+				String name;
+				if(!(cli.selGroup == null || cli.selGroup.isEmpty())) {
+					group = cli.selGroup;
+				} else {
+					try {
+						System.out.print("Group to add server to: ");
+						group = br.readLine();
+					} catch (IOException e) {
+						e.printStackTrace();
+						return true;
+					}
+					
+					if(!Config.getServerGroupNames().contains(group)) {
+						System.out.println(group+" is not a valid group!");
+						return true;
+					} else if(Config.getMode(group) == GroupMode.CLONED) {
+						System.out.println(group+" is a cloned group. Cannot create server.\n"
+								+ ""); // TODO add instructions to change number of servers in cloned group
+						return true;
+					}
+					cli.selGroup = group;
+				}
+				
+				// Now that the proper group is selected, actually create the server
+				try {
+					System.out.print("Name: ");
+					name = br.readLine();
+				} catch (IOException e) {
+					e.printStackTrace();
+					return true;
+				}
+				Config.createServer(cli.selGroup, name);
+				// TODO select newly created server
 				return true;
 			}
 		} else if(parameters.length >= 2 && parameters[0].equals("server")) {
