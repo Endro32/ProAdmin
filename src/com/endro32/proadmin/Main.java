@@ -9,6 +9,7 @@ import com.endro32.proadmin.cli.CLI;
 import com.endro32.proadmin.cli.HelpCommand;
 import com.endro32.proadmin.cli.ListCommand;
 import com.endro32.proadmin.cli.NewCommand;
+import com.endro32.proadmin.cli.SelectCommand;
 import com.endro32.proadmin.cli.UpdateCommand;
 import com.endro32.proadmin.cli.Wizard;
 import com.endro32.proadmin.config.BungeeConfig;
@@ -52,11 +53,12 @@ public class Main {
 		
 		// Register command executors
 		cli.registerExecutor("help", new HelpCommand());
-		cli.registerExecutor("list", new ListCommand());
+		cli.registerExecutor("list", new ListCommand(cli));
 		cli.registerExecutor("update", new UpdateCommand());
 		cli.registerExecutor("wizard", new Wizard());
 		cli.registerExecutor("build", new BuildCommand());
 		cli.registerExecutor("new", new NewCommand(cli));
+		cli.registerExecutor("select", new SelectCommand(cli));
 		
 		cli.listen(); // Start Command-Line Interface
 		
@@ -110,7 +112,6 @@ public class Main {
 	
 	/*
 	 * Task list:
-	 * Implement config create and delete server methods
 	 * Build server class
 	 * Create server management system
 	 * Make new server select newly created sever using the management system

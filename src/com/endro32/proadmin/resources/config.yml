@@ -22,13 +22,12 @@ servers:
     mode: individual
     default:
       app: default
-      defaultmap: Survival
+      defaultmap: world
       icon: default
       plugins:
       - PermissionsEx
       - Multiverse-Core
-      maps:
-      - world
+      maps: []
 eula: true
 installed:
   apps: []

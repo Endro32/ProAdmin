@@ -14,6 +14,12 @@ import com.endro32.proadmin.util.PluginManager;
 
 public class ListCommand implements CommandExecutor {
 
+	CLI cli;
+	
+	public ListCommand(CLI cli) {
+		this.cli = cli;
+	}
+	
 	@Override
 	public boolean onCommand(String command, String[] parameters) {
 		if(!command.equalsIgnoreCase("list") || parameters.length < 1) return false;
@@ -28,6 +34,10 @@ public class ListCommand implements CommandExecutor {
 			if(parameters.length >= 2) {
 				printServers(parameters[1]);
 				return true;
+			} else if(parameters.length == 1 && cli.isGroupSelected()) {
+				printServers(cli.getSelectedGroup());
+				return true;
+				
 			}
 			return false;
 		case "plugins":
@@ -64,7 +74,7 @@ public class ListCommand implements CommandExecutor {
 		System.out.println(
 				  "- 'help': Prints the usage info\n"
 				+ "- 'groups': Prints the different server groups\n"
-				+ "- 'servers <group>': Prints all the servers in the specified group\n"
+				+ "- 'servers <group>': Prints all the servers in the specified or selected group\n"
 				+ "- 'plugins available': Prints all the plugins in the global 'plugins' folder\n"
 				+ "- 'plugins installed <group> (server)': Prints all the plugins installed on an"
 				+ " individual server or a cloned group\n"

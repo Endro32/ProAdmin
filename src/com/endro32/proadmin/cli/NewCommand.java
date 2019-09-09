@@ -45,13 +45,13 @@ public class NewCommand implements CommandExecutor {
 					mode = GroupMode.INDIVIDUAL;
 				Config.createGroup(gname, mode);
 				FileManager.updateServerTree();
-				cli.selGroup = gname;
+				cli.selectGroup(gname);
 				return true;
 			case "server":
 				String group;
 				String name;
-				if(!(cli.selGroup == null || cli.selGroup.isEmpty())) {
-					group = cli.selGroup;
+				if(cli.isGroupSelected()) {
+					group = cli.getSelectedGroup();
 				} else {
 					try {
 						System.out.print("Group to add server to: ");
@@ -69,7 +69,7 @@ public class NewCommand implements CommandExecutor {
 								+ ""); // TODO add instructions to change number of servers in cloned group
 						return true;
 					}
-					cli.selGroup = group;
+					cli.selectGroup(group);
 				}
 				
 				// Now that the proper group is selected, actually create the server
@@ -80,7 +80,8 @@ public class NewCommand implements CommandExecutor {
 					e.printStackTrace();
 					return true;
 				}
-				Config.createServer(cli.selGroup, name);
+				Config.createServer(cli.getSelectedGroup(), name);
+				FileManager.updateServerTree();
 				// TODO select newly created server
 				return true;
 			}

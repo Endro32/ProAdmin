@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.endro32.proadmin.config.Config;
 import com.endro32.proadmin.util.Server;
 
 public class CLI {
@@ -19,14 +20,17 @@ public class CLI {
 	String lastCommand;
 	String[] parameters;
 	
-	String selGroup;
-	Server selServer;
+	private String selGroup;
+	private Server selServer;
+	private boolean bungeeSelected;
 	
 	Map<String, CommandExecutor> executors;
 	
 	public CLI() {
 		input = new BufferedReader(new InputStreamReader(System.in));
 		executors = new HashMap<String, CommandExecutor>();
+		
+		bungeeSelected = false;
 	}
 	
 	/**
@@ -120,12 +124,81 @@ public class CLI {
 		return false;
 	}
 	
+	// Next comes the getter/setter methods for the selection variables
+	
+	public void deselectAll() {
+		selServer = null;
+		selGroup = null;
+		bungeeSelected = false;
+	}
+	
+	public void selectBungee() {
+		selGroup = null;
+		selServer = null;
+		bungeeSelected = true;
+	}
+	
+	public boolean isBungeeSelected() {
+		return bungeeSelected;
+	}
+	
+	/**
+	 * Selects the given group
+	 * @param name
+	 * @return False if group doesn't exist
+	 */
+	public boolean selectGroup(String name) {
+		if(Config.getServerGroupNames().contains(name)) {
+			selGroup = name;
+			return true;
+		}
+		System.out.println(name+" is not a valid group!");
+		return false;
+	}
+	
 	public String getSelectedGroup() {
 		return selGroup;
 	}
 	
+	public boolean isGroupSelected() {
+		return !(selGroup == null || selGroup.isEmpty());
+	}
+	
+	/**
+	 * Select group with given name and select server with given name inside given group
+	 * @param group
+	 * @param name
+	 * @return False if group or server doesn't exist
+	 */
+	public boolean selectServer(String group, String name) {
+		if(!selectGroup(group))
+			return false;
+		// Select server
+		return true;
+	}
+	
+	/**
+	 * Select server with given name inside currently selected group
+	 * @param name
+	 * @return False if server doesn't exist or no group is currently selected
+	 */
+	public boolean selectServer(String name) {
+		if(!isGroupSelected())
+			return false;
+		// Select server
+		return true;
+	}
+	
+	public void deselectServer() {
+		selServer = null;
+	}
+	
 	public Server getSelectedServer() {
 		return selServer;
+	}
+	
+	public boolean isServerSelected() {
+		return selServer != null;
 	}
 	
 }

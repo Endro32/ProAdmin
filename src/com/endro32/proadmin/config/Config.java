@@ -575,13 +575,32 @@ public class Config {
 	public static void createServer(String group, String name) {
 		if(!getServerGroupNames().contains(name))
 			createGroup(group, GroupMode.INDIVIDUAL);
-		if(getServerNamesForGroup(group).contains(name)) return;
-		// TODO implement method
+		if(getServerNamesForGroup(group).contains(name))
+			return;
+		Map<String, Object> server = new HashMap<String, Object>();
+		server.put("app", "default");
+		server.put("defaultmap", "world");
+		server.put("icon", "default");
+		server.put("plugins", new ArrayList<String>());
+		server.put("maps", new ArrayList<String>());
+		try {
+			setObject("servers."+group+"."+name, server);
+		} catch(NullPointerException e) { // If the servers entry of the config doesn't exist
+			e.printStackTrace();
+		}
 	}
 
 	public static void removeServer(String group, String name) {
-		if(!getServerNamesForGroup(group).contains(name)) return;
-		// TODO implement method
+		if(getMode(group) == GroupMode.CLONED ||
+				!getServerNamesForGroup(group).contains(name))
+			return;
+		try {
+			Map<Object, Object> servers = getMap("servers."+group);
+			servers.remove(name);
+			setObject("servers."+group, servers);
+		} catch(NullPointerException e) {
+			return;
+		}
 	}
 
 	public static List<String> getServerNamesForGroup(String group) {
