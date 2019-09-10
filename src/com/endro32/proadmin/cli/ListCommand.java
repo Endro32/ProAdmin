@@ -63,6 +63,11 @@ public class ListCommand implements CommandExecutor {
 			for(String s : AppManager.getAvailableApps())
 				System.out.println("- "+s);
 			return true;
+		case "selected":
+			System.out.println("Selected group: "+cli.getSelectedGroup());
+			if(cli.isServerSelected())
+				System.out.println("Selected server: "+cli.getSelectedServer().getKey());
+			return true;
 		}
 		return false;
 	}

@@ -13,7 +13,8 @@ public class SelectCommand implements CommandExecutor {
 	
 	@Override
 	public boolean onCommand(String command, String[] parameters) {
-		if(!command.equalsIgnoreCase("select") || parameters.length < 1) return false;
+		if(!command.equalsIgnoreCase("select") || parameters.length < 1)
+			return false;
 		if(parameters[0].equals("home") || parameters[0].equals("root")) {
 			cli.deselectAll();
 			
@@ -33,16 +34,19 @@ public class SelectCommand implements CommandExecutor {
 			
 		} else if(parameters[0].equals("server")) {
 			if(parameters.length == 2 && cli.isGroupSelected()) {
-				// Select server inside currently selected group
+				if(!cli.selectServer(parameters[1])) {
+					System.out.println("That server does not exist");
+				}
 			} else if(parameters.length >= 3) {
 				if(!Config.getServerGroupNames().contains(parameters[1])) {
 					System.out.println(parameters[1]+" is not a valid group!");
 				} else if(Config.getMode(parameters[1]) == GroupMode.CLONED) {
 					System.out.println("Cannot select server inside cloned group "+parameters[1]);
 				} else {
-					cli.selectGroup(parameters[1]);
+					if(!cli.selectServer(parameters[1], parameters[2])) {
+						System.out.println("That server does not exist");
+					}
 				}
-				// Select server inside newly selected group
 			}
 		} else {
 			return false;

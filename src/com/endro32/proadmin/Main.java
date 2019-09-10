@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 
 import com.endro32.proadmin.cli.BuildCommand;
 import com.endro32.proadmin.cli.CLI;
+import com.endro32.proadmin.cli.CommandExecutor;
 import com.endro32.proadmin.cli.HelpCommand;
 import com.endro32.proadmin.cli.ListCommand;
 import com.endro32.proadmin.cli.NewCommand;

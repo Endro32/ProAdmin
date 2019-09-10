@@ -11,8 +11,13 @@ import java.util.Map;
 
 import com.endro32.proadmin.config.Config;
 import com.endro32.proadmin.util.Server;
+import com.endro32.proadmin.util.ServerManager;
 
 public class CLI {
+	
+	Map<String, CommandExecutor> executors;
+	
+	ServerManager serverManager;
 	
 	BufferedReader input;
 	String lastInput;
@@ -21,14 +26,13 @@ public class CLI {
 	String[] parameters;
 	
 	private String selGroup;
-	private Server selServer;
+	private String selServer;
 	private boolean bungeeSelected;
-	
-	Map<String, CommandExecutor> executors;
 	
 	public CLI() {
 		input = new BufferedReader(new InputStreamReader(System.in));
 		executors = new HashMap<String, CommandExecutor>();
+		serverManager = new ServerManager();
 		
 		bungeeSelected = false;
 	}
@@ -171,9 +175,11 @@ public class CLI {
 	 * @return False if group or server doesn't exist
 	 */
 	public boolean selectServer(String group, String name) {
-		if(!selectGroup(group))
+		String key = group+"."+name;
+		if(!selectGroup(group) ||
+				!serverManager.getServers().containsKey(key))
 			return false;
-		// Select server
+		selServer = key;
 		return true;
 	}
 	
@@ -183,9 +189,10 @@ public class CLI {
 	 * @return False if server doesn't exist or no group is currently selected
 	 */
 	public boolean selectServer(String name) {
-		if(!isGroupSelected())
+		if(!isGroupSelected() ||
+				!serverManager.getServers().containsKey(selGroup+"."+name))
 			return false;
-		// Select server
+		selServer = selGroup+"."+name;
 		return true;
 	}
 	
@@ -194,7 +201,7 @@ public class CLI {
 	}
 	
 	public Server getSelectedServer() {
-		return selServer;
+		return serverManager.getServer(selServer);
 	}
 	
 	public boolean isServerSelected() {

@@ -82,7 +82,8 @@ public class NewCommand implements CommandExecutor {
 				}
 				Config.createServer(cli.getSelectedGroup(), name);
 				FileManager.updateServerTree();
-				// TODO select newly created server
+				cli.serverManager.reloadServers();
+				cli.selectServer(name);
 				return true;
 			}
 		} else if(parameters.length >= 2 && parameters[0].equals("server")) {
