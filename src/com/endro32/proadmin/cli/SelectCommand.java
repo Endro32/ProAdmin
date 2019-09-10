@@ -29,6 +29,18 @@ public class SelectCommand implements CommandExecutor {
 		} else if(parameters[0].equals("bungeecord")) {
 			cli.selectBungee();
 			
+		} else if(parameters.length == 1) {
+			if(!cli.isGroupSelected()) { // Root selected
+				if(Config.getServerGroupNames().contains(parameters[0]))
+					cli.selectGroup(parameters[0]);
+				else
+					System.out.println(parameters[0]+" is not a valid group!");
+			} else { // Group selected
+				if(Config.getServerNamesForGroup(cli.getSelectedGroup()).contains(parameters[0]))
+					cli.selectServer(parameters[0]);
+				else
+					System.out.println(parameters[0]+" is not a valid server in selected group!");
+			}
 		} else if(parameters.length >= 2 && parameters[0].equals("group")) {
 			cli.selectGroup(parameters[1]);
 			

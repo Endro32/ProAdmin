@@ -25,8 +25,8 @@ public class CLI {
 	String lastCommand;
 	String[] parameters;
 	
-	private String selGroup;
-	private String selServer;
+	private String selGroup; // Group name
+	private String selServer; // Server key
 	private boolean bungeeSelected;
 	
 	public CLI() {
@@ -42,8 +42,13 @@ public class CLI {
 	 */
 	public void listen() {
 		while(true) {
+			String pre = "~";
 			try {
-				System.out.print("$: ");
+				if(isGroupSelected())
+					pre = pre.concat("/"+selGroup);
+				if(isServerSelected())
+					pre = pre.concat("/"+selServer.substring(selServer.lastIndexOf('.')+1));
+				System.out.print(pre+"$ ");
 				lastInput = input.readLine();
 			} catch(IOException e) {
 				e.printStackTrace();

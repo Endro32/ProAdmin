@@ -81,8 +81,8 @@ public class NewCommand implements CommandExecutor {
 					return true;
 				}
 				Config.createServer(cli.getSelectedGroup(), name);
-				FileManager.updateServerTree();
-				cli.serverManager.reloadServers();
+				FileManager.updateServerDirectory(group, name);
+				cli.serverManager.reloadServer(group, name);
 				cli.selectServer(name);
 				return true;
 			}

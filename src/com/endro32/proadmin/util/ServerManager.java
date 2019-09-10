@@ -41,16 +41,7 @@ public class ServerManager {
 			if(Config.getMode(group) == GroupMode.CLONED)
 				continue;
 			for(String name : Config.getServerNamesForGroup(group)) {
-				Server s;
-				String app = Config.getAppForServer(group, name);
-				if(app.contains("spigot")) {
-					s = new SpigotServer(group, name);
-				} else if(app.contains("craftbukkit")) {
-					s = new CraftbukkitServer(group, name);
-				} else {
-					s = new Server(group, name);
-				}
-				serverMap.put(s.getKey(), s);
+				reloadServer(group, name);
 			}
 		}
 	}
@@ -61,6 +52,19 @@ public class ServerManager {
 	public void reloadServers() {
 		// TODO Deconstruct
 		loadServers();
+	}
+	
+	public void reloadServer(String group, String name) {
+		Server s;
+		String app = Config.getAppForServer(group, name);
+		if(app.contains("spigot")) {
+			s = new SpigotServer(group, name);
+		} else if(app.contains("craftbukkit")) {
+			s = new CraftbukkitServer(group, name);
+		} else {
+			s = new Server(group, name);
+		}
+		serverMap.put(s.getKey(), s);
 	}
 
 	public static void update(String group, String server) {
