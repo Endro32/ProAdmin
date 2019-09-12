@@ -86,7 +86,8 @@ public class NewCommand implements CommandExecutor {
 				cli.selectServer(name);
 				return true;
 			}
-		} else if(parameters.length >= 2 && parameters[0].equals("server")) {
+		} else if(parameters.length == 2 && parameters[0].equals("server")) {
+			// New server with group specified in initial command
 			if(!Config.getServerGroupNames().contains(parameters[1])) {
 				System.out.println(parameters[1]+" is not a valid group!");
 				return true;
@@ -94,6 +95,8 @@ public class NewCommand implements CommandExecutor {
 				System.out.println("Cannot create server in cloned group");
 				return true;
 			}
+		} else if(parameters.length >= 3 && parameters[0].equals("group")) {
+			// New group with name and type specified in initial command
 		}
 		return false;
 	}

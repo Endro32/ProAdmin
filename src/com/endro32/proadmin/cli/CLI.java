@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import com.endro32.proadmin.config.Config;
 import com.endro32.proadmin.util.Server;
@@ -16,10 +17,12 @@ import com.endro32.proadmin.util.ServerManager;
 public class CLI {
 	
 	Map<String, CommandExecutor> executors;
+	Map<String, String> aliases;
 	
 	ServerManager serverManager;
 	
 	BufferedReader input;
+	Scanner scnr;
 	String lastInput;
 	
 	String lastCommand;
@@ -29,19 +32,40 @@ public class CLI {
 	private String selServer; // Server key
 	private boolean bungeeSelected;
 	
+	private boolean listening = true;
+	
 	public CLI() {
 		input = new BufferedReader(new InputStreamReader(System.in));
 		executors = new HashMap<String, CommandExecutor>();
+		aliases = new HashMap<String, String>();
 		serverManager = new ServerManager();
 		
 		bungeeSelected = false;
+		
+		// Register all executors
+		registerExecutor("help", new HelpCommand());
+		registerExecutor("list", new ListCommand(this));
+		registerExecutor("update", new UpdateCommand());
+		registerExecutor("wizard", new Wizard(scnr));
+		registerExecutor("build", new BuildCommand());
+		registerExecutor("new", new NewCommand(this));
+		registerExecutor("select", new SelectCommand(this));
+		registerExecutor("exit", new ExitCommand());
+		
+		// Add all aliases
+		addAlias("s", "select");
+		addAlias("sel", "select");
+		addAlias("l", "list");
+		addAlias("x", "exit");
+		addAlias("n", "new");
+		addAlias("h", "help");
 	}
 	
 	/**
 	 * Begins an infinite loop of reading input lines, ending when the user types 'exit'
 	 */
 	public void listen() {
-		while(true) {
+		while(listening) {
 			String pre = "~";
 			try {
 				if(isGroupSelected())
@@ -54,9 +78,15 @@ public class CLI {
 				e.printStackTrace();
 			}
 			parseLastInput();
-			if(lastCommand.equals("exit")) break;
 			executeLastCommand();
 		}
+	}
+	
+	/**
+	 * Ends the listen loop after the current iteration ends
+	 */
+	public void stopListening() {
+		listening = false;
 	}
 	
 	/**
@@ -87,7 +117,14 @@ public class CLI {
 			parameters = new String[0];
 			return;
 		}
-		lastCommand = list.remove(0).toLowerCase();
+		
+		// Handle command aliases
+		String command = list.remove(0).toLowerCase();
+		if(aliases.containsKey(command)) {
+			command = aliases.get(command);
+		}
+		
+		lastCommand = command;
 		parameters = list.toArray(new String[list.size()]);
 	}
 	
@@ -117,8 +154,30 @@ public class CLI {
 	 * @param executor CommandExecutor object that will handle the command
 	 */
 	public void registerExecutor(String command, CommandExecutor executor) {
-		if(executors.containsKey(command.toLowerCase())) return;
+		if(executors.containsKey(command.toLowerCase()))
+			return;
 		executors.put(command.toLowerCase(), executor);
+	}
+	
+	/**
+	 * Remove an executor from the map
+	 * @param command command String the user will enter
+	 */
+	public void removeExecutor(String command) {
+		if(!executors.containsKey(command.toLowerCase()))
+			return;
+		executors.remove(command.toLowerCase());
+	}
+	
+	/**
+	 * Adds an alias for a command to the alias map
+	 * @param alias
+	 * @param command
+	 */
+	public void addAlias(String alias, String command) {
+		if(!executors.containsKey(command))
+			return;
+		aliases.put(alias, command);
 	}
 	
 	/**

@@ -32,7 +32,8 @@ public class HelpCommand implements CommandExecutor {
 	@Override
 	public void showUsage() {
 		// TODO Auto-generated method stub
-		System.out.println("There are dragon eggs around here somewhere...");
+		System.out.println("- 'help': Shows a list of available commands\n"
+				+ "- 'help <command>' Shows the usage for a command");
 	}
 	
 	@Override
