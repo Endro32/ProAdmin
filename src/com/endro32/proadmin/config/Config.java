@@ -34,10 +34,6 @@ public class Config {
 	public static enum AutoUpdate {
 		SERVERS, VANILLA, SNAPSHOT, SPIGOT, BUNGEECORD
 	}
-
-	public static enum AvailableType {
-		APP, PLUGIN, MAP
-	}
 	
 	/*
 	 * This is the instance of YAMLConfig used to access the file itself. The
