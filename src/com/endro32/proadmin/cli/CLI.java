@@ -1,8 +1,5 @@
 package com.endro32.proadmin.cli;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,7 +18,6 @@ public class CLI {
 	
 	ServerManager serverManager;
 	
-	BufferedReader input;
 	Scanner scnr;
 	String lastInput;
 	
@@ -35,7 +31,7 @@ public class CLI {
 	private boolean listening = true;
 	
 	public CLI() {
-		input = new BufferedReader(new InputStreamReader(System.in));
+		scnr = new Scanner(System.in);
 		executors = new HashMap<String, CommandExecutor>();
 		aliases = new HashMap<String, String>();
 		serverManager = new ServerManager();
@@ -48,7 +44,7 @@ public class CLI {
 		registerExecutor("update", new UpdateCommand());
 		registerExecutor("wizard", new Wizard(scnr));
 		registerExecutor("build", new BuildCommand());
-		registerExecutor("new", new NewCommand(this));
+		registerExecutor("new", new NewCommand(this, scnr));
 		registerExecutor("select", new SelectCommand(this));
 		registerExecutor("exit", new ExitCommand());
 		
@@ -67,16 +63,13 @@ public class CLI {
 	public void listen() {
 		while(listening) {
 			String pre = "~";
-			try {
-				if(isGroupSelected())
-					pre = pre.concat("/"+selGroup);
-				if(isServerSelected())
-					pre = pre.concat("/"+selServer.substring(selServer.lastIndexOf('.')+1));
-				System.out.print(pre+"$ ");
-				lastInput = input.readLine();
-			} catch(IOException e) {
-				e.printStackTrace();
-			}
+			if(isGroupSelected())
+				pre = pre.concat("/"+selGroup);
+			if(isServerSelected())
+				pre = pre.concat("/"+selServer.substring(selServer.lastIndexOf('.')+1));
+			System.out.print(pre+"$ ");
+			
+			lastInput = scnr.nextLine();
 			parseLastInput();
 			executeLastCommand();
 		}

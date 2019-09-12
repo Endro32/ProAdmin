@@ -19,7 +19,6 @@ public class Main {
 	static PluginManager pluginManager;
 	
 	public static void main(String[] args) {
-		//initialize();
 		
 		cli = new CLI();
 		pluginManager = new PluginManager();

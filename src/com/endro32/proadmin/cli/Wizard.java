@@ -1,7 +1,5 @@
 package com.endro32.proadmin.cli;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.Scanner;
 
 public class Wizard implements CommandExecutor {

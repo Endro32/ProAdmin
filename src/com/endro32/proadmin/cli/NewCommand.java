@@ -1,8 +1,6 @@
 package com.endro32.proadmin.cli;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.Scanner;
 
 import com.endro32.proadmin.config.Config;
 import com.endro32.proadmin.util.FileManager;
@@ -11,16 +9,17 @@ import com.endro32.proadmin.util.GroupMode;
 public class NewCommand implements CommandExecutor {
 
 	CLI cli;
+	Scanner scnr;
 	
-	public NewCommand(CLI cli) {
+	public NewCommand(CLI cli, Scanner scan) {
 		this.cli = cli;
+		scnr = scan;
 	}
 	
 	@Override
 	public boolean onCommand(String command, String[] parameters) {
 		if(!command.equalsIgnoreCase("new") || parameters.length < 1)
 			return false;
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
 		if(parameters.length == 1) {
 			switch(parameters[0]) {
@@ -28,15 +27,11 @@ public class NewCommand implements CommandExecutor {
 				String gname;
 				String in;
 				GroupMode mode;
-				try {
-					System.out.print("Group name: ");
-					gname = br.readLine();
-					System.out.print("Individual or cloned? [I/c]: ");
-					in = br.readLine();
-				} catch (IOException e) {
-					e.printStackTrace();
-					return true;
-				}
+				
+				System.out.print("Group name: ");
+				gname = scnr.nextLine();
+				System.out.print("Individual or cloned? [I/c]: ");
+				in = scnr.nextLine();
 				
 				in = in.toLowerCase();
 				if(in.startsWith("c"))
@@ -53,13 +48,8 @@ public class NewCommand implements CommandExecutor {
 				if(cli.isGroupSelected()) {
 					group = cli.getSelectedGroup();
 				} else {
-					try {
-						System.out.print("Group to add server to: ");
-						group = br.readLine();
-					} catch (IOException e) {
-						e.printStackTrace();
-						return true;
-					}
+					System.out.print("Group to add server to: ");
+					group = scnr.nextLine();
 					
 					if(!Config.getServerGroupNames().contains(group)) {
 						System.out.println(group+" is not a valid group!");
@@ -72,14 +62,8 @@ public class NewCommand implements CommandExecutor {
 					cli.selectGroup(group);
 				}
 				
-				// Now that the proper group is selected, actually create the server
-				try {
-					System.out.print("Name: ");
-					name = br.readLine();
-				} catch (IOException e) {
-					e.printStackTrace();
-					return true;
-				}
+				System.out.print("Name: ");
+				name = scnr.nextLine();
 				Config.createServer(cli.getSelectedGroup(), name);
 				FileManager.updateServerDirectory(group, name);
 				cli.serverManager.reloadServer(group, name);
