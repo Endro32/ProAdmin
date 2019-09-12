@@ -95,6 +95,8 @@ public class Main {
 	
 	/*
 	 * Task list:
+	 * Add installToServer() method in appManager
+	 * Add app management to 'new' command
 	 */
 	
 }

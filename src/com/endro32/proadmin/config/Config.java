@@ -88,9 +88,9 @@ public class Config {
 	}
 
 	/**
-	 * Creates a server group in the config This action will be reflected on the
-	 * filesystem almost immediately, as this method will then update the
-	 * filesystem
+	 * Creates a server group in the config. Does nothing to the filesystem
+	 * @param name Name of the group to create
+	 * @param mode Individual or cloned
 	 */
 	public static void createGroup(String name, GroupMode mode) {
 		if(getServerGroupNames().contains(name)) return;
@@ -116,6 +116,11 @@ public class Config {
 		}
 	}
 
+	/**
+	 * Creates a new server in the config. Does nothing to the filesystem
+	 * @param group Group to add the server to
+	 * @param name Name of the server to create
+	 */
 	public static void createServer(String group, String name) {
 		if(!getServerGroupNames().contains(name))
 			createGroup(group, GroupMode.INDIVIDUAL);
@@ -134,6 +139,11 @@ public class Config {
 		}
 	}
 
+	/**
+	 * Gets the app being used by a cloned group
+	 * @param group Name of the group
+	 * @return Name of the app being used
+	 */
 	public static String getAppForGroup(String group) {
 		if(!(getServerGroupNames().contains(group) && getMode(group).equals(GroupMode.CLONED)))
 			return null;
@@ -145,6 +155,12 @@ public class Config {
 		}
 	}
 
+	/**
+	 * Gets the app being used by a server in an individual group
+	 * @param group Name of the group the server is in
+	 * @param server Name of the server
+	 * @return Name of the app being used
+	 */
 	public static String getAppForServer(String group, String server) {
 		if(!(getServerGroupNames().contains(group) && getServerNamesForGroup(group)
 				.contains(server) && getMode(group).equals(GroupMode.INDIVIDUAL))) return null;
@@ -157,8 +173,7 @@ public class Config {
 	}
 
 	/**
-	 * @param option
-	 *            Autoupdater to get the value of
+	 * @param option Autoupdater to get the value of
 	 * @return Whether the specified autoupdater is enabled
 	 */
 	public static boolean getAutoupdate(AutoUpdate option) {
@@ -187,6 +202,11 @@ public class Config {
 		}
 	}
 
+	/**
+	 * Gets the available apps, plugins, or maps and returns their names as a list.
+	 * @param type Which type of object you're looking for: app, plugin, or map
+	 * @return List of names
+	 */
 	public static List<String> getAvailable(AvailableType type) {
 		List<String> retData = new ArrayList<String>();
 		List<Object> list = new ArrayList<Object>();
@@ -207,6 +227,11 @@ public class Config {
 		return retData;
 	}
 
+	/**
+	 * Gets a boolean from the config
+	 * @param key
+	 * @return
+	 */
 	static boolean getBoolean(String key) {
 		Object obj = new Object();
 		try {
@@ -232,7 +257,6 @@ public class Config {
 	/**
 	 * @return What port bungeecord is listening on
 	 */
-
 	public static int getBungeecordPort() {
 		try {
 			return getInt("bungeecord.port");
@@ -292,7 +316,7 @@ public class Config {
 	}
 
 	/*
-	 * Above this point are the global settings Below are the bungeecord
+	 * Above this point are the global settings. Below are the bungeecord
 	 * settings
 	 */
 
@@ -390,7 +414,7 @@ public class Config {
 	}
 
 	/*
-	 * Above this point are the bungeecord settings Below are the server
+	 * Above this point are the bungeecord settings. Below are the server
 	 * management settings
 	 */
 

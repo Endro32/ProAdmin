@@ -151,6 +151,9 @@ public class ServerManager {
 		}
 	}
 	
+	/**
+	 * Regenerates servers portion of the Bungeecord config
+	 */
 	public static void updateBungeecordRegistry() {
 		BungeeConfig.clearRegisteredServers();
 		ServerProperties sp;
